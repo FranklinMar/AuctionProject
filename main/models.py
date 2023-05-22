@@ -1,3 +1,5 @@
+import datetime
+
 from django.db import models
 
 from django.conf import settings
@@ -15,5 +17,6 @@ class User(Document):
     balance = Decimal128Field(default=0, min_value=0)
     items = ListField()
     chats = ListField()
+    date_modified = DateTimeField(default=datetime.datetime.utcnow())
 
     meta = {'db_alias': 'user'}
