@@ -32,8 +32,6 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'main',
-    'django.contrib.postgres',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -88,13 +86,9 @@ WSGI_APPLICATION = 'AuctionProject.wsgi.application'
 # }
 DATABASES = {
     'default': {
-        'ENGINE': 'djongo',
+        'ENGINE': 'django.db.backends.sqlite3',
         'NAME': 'Auction',
-        'ENFORCE_SCHEMA': False,
-        'CLIENT': {
-            'host': ''
-        }
-
+        'HOST': 'mongodb+srv://denys:Navchanya-109@auction.zwp8ssf.mongodb.net/?retryWrites=true&w=majority'
     }
 }
 
