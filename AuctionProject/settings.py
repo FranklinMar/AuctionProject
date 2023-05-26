@@ -88,7 +88,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': 'Auction',
-        'HOST': 'mongodb+srv://denys:Navchanya-109@auction.zwp8ssf.mongodb.net/?retryWrites=true&w=majority'
+        'CONNECTION': ''
     }
 }
 

@@ -1,13 +1,14 @@
-import datetime
-
 from django.db import models
-
+from pymongo import MongoClient
 from django.conf import settings
 # Create your models here.
 # from djongo import models
 # from django.core.exceptions import ValidationError
 # from django.utils import timezone
 # from djangotoolbox.fields import ListField
+CLIENT = MongoClient(settings.DATABASES['default']['CONNECTION'])
+DB = CLIENT[settings.DATABASES['default']['NAME']]
+
 
 
 # def min_value_allowed(value):
