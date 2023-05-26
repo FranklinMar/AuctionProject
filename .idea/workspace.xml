@@ -1,14 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="563f30de-4a77-4255-ab1d-5432b6855af3" name="Changes" comment="feat (DB): Added new collection class (Document) - &quot;User&quot;">
-      <change beforePath="$PROJECT_DIR$/AuctionProject/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/AuctionProject/urls.py" afterDir="false" />
+    <list default="true" id="563f30de-4a77-4255-ab1d-5432b6855af3" name="Changes" comment="feat (URL/DB):&#10;- Added new URL file and view function 'home';&#10;- Added 'date_modified' field to 'User'.">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AuctionProject/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/AuctionProject/settings.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -42,6 +51,7 @@
       <option name="PARENT_ENVS" value="true" />
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
+        <env name="DJANGO_SETTINGS_MODULE" value="AuctionProject.settings" />
       </envs>
       <option name="SDK_HOME" value="" />
       <option name="WORKING_DIRECTORY" value="" />
@@ -74,7 +84,9 @@
       <workItem from="1682528113976" duration="1732000" />
       <workItem from="1684146891598" duration="1597000" />
       <workItem from="1684322675601" duration="1511000" />
-      <workItem from="1684766050154" duration="2984000" />
+      <workItem from="1684766050154" duration="5828000" />
+      <workItem from="1684772527275" duration="644000" />
+      <workItem from="1685115308104" duration="5366000" />
     </task>
     <task id="LOCAL-00001" summary="feat (DB): Changed DB engine to Mongo DB with Django - djongo.">
       <created>1684323984704</created>
@@ -97,7 +109,14 @@
       <option name="project" value="LOCAL" />
       <updated>1684768861645</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="feat (URL/DB):&#10;- Added new URL file and view function 'home';&#10;- Added 'date_modified' field to 'User'.">
+      <created>1684769351078</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1684769351078</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -118,6 +137,17 @@
     <MESSAGE value="feat (DB): Changed DB engine to Mongo DB with Django - djongo." />
     <MESSAGE value="feat (DB): Changed DB engine to Mongo DB ORM - MongoEngine." />
     <MESSAGE value="feat (DB): Added new collection class (Document) - &quot;User&quot;" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat (DB): Added new collection class (Document) - &quot;User&quot;" />
+    <MESSAGE value="feat (URL/DB):&#10;- Added new URL file and view function 'home';&#10;- Added 'date_modified' field to 'User'." />
+    <option name="LAST_COMMIT_MESSAGE" value="feat (URL/DB):&#10;- Added new URL file and view function 'home';&#10;- Added 'date_modified' field to 'User'." />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/main/models.py</url>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
