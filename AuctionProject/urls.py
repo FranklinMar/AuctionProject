@@ -15,8 +15,16 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from users.views import user_id, settings
+from items.views import item_id, auction
+from chats.views import chat_id
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('main.urls'))
+    path('', include('main.urls')),
+    path('user/<str:id>/settings/', settings),
+    path('user/<str:id>/', user_id),
+    path('item/<str:id>/', item_id),
+    path('auction/<str:id>/', auction),
+    path('chat/<str:id>/', chat_id),
 ]
