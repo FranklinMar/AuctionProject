@@ -15,16 +15,22 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from users.views import user_id, settings
-from items.views import item_id, auction
-from chats.views import chat_id
+# from users.views import user_id, settings
+# from items.views import item_id, auction
+# from chats.views import chat_id
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('main.urls')),
-    path('user/<str:id>/settings/', settings),
-    path('user/<str:id>/', user_id),
-    path('item/<str:id>/', item_id),
-    path('auction/<str:id>/', auction),
-    path('chat/<str:id>/', chat_id),
-]
+    path('user/', include('users.urls')),
+    # path('user/<str:id>/settings/', settings),
+    # path('user/<str:id>/', user_id),
+    # path('item/<str:id>/', item_id),
+    # path('auction/<str:id>/', auction),
+    path('item/', include('items.urls')),
+    # path('chat/<str:id>/', chat_id),
+    path('chat/', include('chats.urls')),
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + \
+              static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
