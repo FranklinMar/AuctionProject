@@ -1,6 +1,8 @@
 import datetime
+from functools import partial
 
 from bson import ObjectId
+from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db import models
 from pymongo import MongoClient
 from django.core.validators import validate_email
@@ -10,11 +12,22 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.contrib.auth.hashers import make_password  # , check_password
 from django.contrib.auth.password_validation import validate_password
+from django.core.files.storage import FileSystemStorage
+from PIL import Image
+import hashlib
 from datetime import datetime
 # from django.utils import timezone
 # from djangotoolbox.fields import ListField
 CLIENT = MongoClient(settings.DATABASES['default']['CONNECTION'])
 DB = CLIENT[settings.DATABASES['default']['NAME']]
+
+
+def hash_file(file, block_size=65536):
+    hasher = hashlib.sha256()
+    for buf in iter(partial(file.read, block_size), b''):
+        hasher.update(buf)
+
+    return hasher.hexdigest()
 
 
 class User:
@@ -124,9 +137,23 @@ class User:
 
     @image.setter
     def image(self, value):
+        file_storage = FileSystemStorage()
+        if isinstance(value, str):
+            if not file_storage.exists(value):
+                raise ValidationError('File does not exist in a storage')
+            filename = value
+        elif isinstance(value, InMemoryUploadedFile):
+            image = Image.open(value)
+            image.verify()
+            filename = f'images/users/{hash_file(value)}.{value.content_type.split("/")[-1]}'
+            if not file_storage.exists(filename):
+                file_storage.save(filename, value)
+        else:
+            raise TypeError(f"Property type must be 'str' or 'InMemoryUploadedFile', not '{type(value).__name__}'")
+
         # if not isinstance(value, str):
         #     raise TypeError(f"Property type must be a number, not '{type(value).__name__}'")
-        self.__image = value
+        self.__image = filename
 
     @property
     def items(self):
@@ -141,7 +168,7 @@ class User:
             raise TypeError(f"Property type must be a list of 'str', not '{type(value).__name__}'")
         if not all(isinstance(item, ObjectId) for item in value):
             raise TypeError(f"Property type inside list must be 'ObjectId'")
-        if len(value) != len(DB['Item'].find({"_id": {"$in": value}})):
+        if len(value) != len(list(DB['Item'].find({"_id": {"$in": value}}))):
             # items_collection = DB['Item']
             # if len(value) != len([items_collection.find_one({"_id": item}) for item in value]):
             raise ValidationError("Not all items found")
@@ -157,7 +184,7 @@ class User:
             raise TypeError(f"Property type must be a list of 'str', not '{type(value).__name__}'")
         if not all(isinstance(item, ObjectId) for item in value):
             raise TypeError(f"Property type inside list must be 'ObjectId'")
-        if len(value) != len(DB['Chat'].find({"_id": {"$in": value}})):
+        if len(value) != len(list(DB['Chat'].find({"_id": {"$in": value}}))):
             # if len(value) != len([chats_collection.find_one({"_id": item}) for item in value]):
             raise ValidationError("Not all items found")
         self.__chats = value
@@ -173,8 +200,12 @@ class User:
         return [cls(**document) for document in cls.__collection.find()]
 
     @classmethod
+    def find_one(cls, filter_):
+        return cls(**cls.__collection.find_one(filter=filter_))
+
+    @classmethod
     def find(cls, filter_):
-        return cls(**cls.__collection.find(filter=filter_))
+        return cls.__collection.find(filter=filter_)
     # def all(self):
     #     return self.__collection.find()
     #
@@ -327,9 +358,23 @@ class Item:
 
     @image.setter
     def image(self, value):
+        file_storage = FileSystemStorage()
+        if isinstance(value, str):
+            if not file_storage.exists(value):
+                raise ValidationError('File does not exist in a storage')
+            filename = value
+        elif isinstance(value, InMemoryUploadedFile):
+            image = Image.open(value)
+            image.verify()
+            filename = f'images/items/{hash_file(value)}.{value.content_type.split("/")[-1]}'
+            if not file_storage.exists(filename):
+                file_storage.save(filename, value)
+        else:
+            raise TypeError(f"Property type must be 'str' or 'InMemoryUploadedFile', not '{type(value).__name__}'")
+
         # if not isinstance(value, str):
         #     raise TypeError(f"Property type must be a number, not '{type(value).__name__}'")
-        self.__image = value
+        self.__image = filename
 
     @property
     def auction(self):
@@ -346,8 +391,12 @@ class Item:
         return [cls(**document) for document in cls.__collection.find()]
 
     @classmethod
+    def find_one(cls, filter_):
+        return cls(**cls.__collection.find_one(filter=filter_))
+
+    @classmethod
     def find(cls, filter_):
-        return cls(**cls.__collection.find(filter=filter_))
+        return cls.__collection.find(filter=filter_)
 
 
 class Chat:
@@ -418,7 +467,7 @@ class Chat:
             raise TypeError(f"Property type must be a list of 'ObjectId', not '{type(value).__name__}'")
         if not all(isinstance(item, ObjectId) for item in value):
             raise TypeError(f"Property type inside list must be 'ObjectId'")
-        if len(value) != len(DB['User'].find({"id", {"$in": value}})):
+        if len(value) != len(list(DB['User'].find({"id", {"$in": value}}))):
             raise ValidationError(f"Not all users found")
         self.__users = value
 
@@ -431,9 +480,23 @@ class Chat:
 
     @image.setter
     def image(self, value):
+        file_storage = FileSystemStorage()
+        if isinstance(value, str):
+            if not file_storage.exists(value):
+                raise ValidationError('File does not exist in a storage')
+            filename = value
+        elif isinstance(value, InMemoryUploadedFile):
+            image = Image.open(value)
+            image.verify()
+            filename = f'images/chats/{hash_file(value)}.{value.content_type.split("/")[-1]}'
+            if not file_storage.exists(filename):
+                file_storage.save(filename, value)
+        else:
+            raise TypeError(f"Property type must be 'str' or 'InMemoryUploadedFile', not '{type(value).__name__}'")
+
         # if not isinstance(value, str):
         #     raise TypeError(f"Property type must be a number, not '{type(value).__name__}'")
-        self.__image = value
+        self.__image = filename
 
     @property
     def messages(self):
@@ -445,7 +508,7 @@ class Chat:
             raise TypeError(f"Property type must be a list of 'ObjectId', not '{type(value).__name__}'")
         if not all(isinstance(item, ObjectId) for item in value):
             raise TypeError(f"Property type inside list must be 'ObjectId'")
-        if len(value) != len(DB['Message'].find({"id", {"$in": value}})):
+        if len(value) != len(list(DB['Message'].find({"id", {"$in": value}}))):
             raise ValidationError(f"Not all messages found")
         self.__messages = value
 
@@ -457,8 +520,12 @@ class Chat:
         return [cls(**document) for document in cls.__collection.find()]
 
     @classmethod
+    def find_one(cls, filter_):
+        return cls(**cls.__collection.find_one(filter=filter_))
+
+    @classmethod
     def find(cls, filter_):
-        return cls(**cls.__collection.find(filter=filter_))
+        return cls.__collection.find(filter=filter_)
 
     # def all(self):
     #     return self.__collection.find()
@@ -537,8 +604,12 @@ class Message:
         return [cls(**document) for document in cls.__collection.find()]
 
     @classmethod
+    def find_one(cls, filter_):
+        return cls(**cls.__collection.find_one(filter=filter_))
+
+    @classmethod
     def find(cls, filter_):
-        return cls(**cls.__collection.find(filter=filter_))
+        return cls.__collection.find(filter=filter_)
 
 # def min_value_allowed(value):
 #     if value >= 0:
