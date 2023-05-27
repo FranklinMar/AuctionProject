@@ -10,6 +10,11 @@
         <a class="btn btn-primary btn-xl text-uppercase" href="#services">Tell Me More</a>
     </div>
 </header>
+<form id="form" class="image" enctype="multipart/form-data" method="POST" action="{{ request.path }}">
+    {% csrf_token %}
+    {{ form.file }}
+  <button type="submit" id="submit" class="btn btn-dark"><span>UPLOAD</span></button>
+</form>
 <!-- Services-->
 <section class="page-section" id="services">
     <div class="container">
