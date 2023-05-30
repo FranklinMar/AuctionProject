@@ -26,7 +26,6 @@ def hash_file(file, block_size=65536):
     hasher = hashlib.sha256()
     for buf in iter(partial(file.read, block_size), b''):
         hasher.update(buf)
-
     return hasher.hexdigest()
 
 
@@ -36,27 +35,18 @@ class User:
     # __chats = DB['Chat']
     __roles = ('admin', 'mod', 'user', 'guest')
 
-    def __init__(self, name, password, email, balance=0, role='user',
-                 image='images/users/default.jpg', items=[], chats=[]):
-        self.name = name
-        self.password = password
-        self.email = email
-        self.balance = balance
-        self.role = role
-        self.image = image
-        self.items = items
-        self.chats = chats
-        # print(vars(self))
-        # dictionary = self.get_vars()
-        # self.__id = self.__collection.insert_one(dictionary).inserted_id
-
-        dictionary = self.get_vars()
-        document = self.__collection.find_one(dictionary)
-        if not document:
-            self.__id = self.__collection.insert_one(dictionary).inserted_id
-        else:
-            for key in document:
-                setattr(self, key, document[key])
+    def __init__(self, document):
+        #name, password, email, balance=0, role='user',
+        #image='images/users/default.jpg', items=[], chats=[]
+        self.__name = document['name']
+        self.__password = document['password']
+        self.__email = document['email']
+        self.__balance = float(document['balance']) if 'balance' in document else 0
+        self.__role = document['role'] if 'role' in document else 'user'
+        self.__image = document['image'] if 'image' in document else 'default'
+        self.items = document['items'] if 'items' in document else []
+        self.chats = document['chats'] if 'chats' in document else []
+        self.__id = document['_id']
 
     def save(self):
         dictionary = self.get_vars()  # {key.replace('_User__', ''): self.__dict__[key] for key in self.__dict__}
@@ -73,7 +63,7 @@ class User:
 
     @property
     def id(self):
-        return self.__id
+        return str(self.__id)
 
     @property
     def name(self):
@@ -93,8 +83,7 @@ class User:
     def password(self, value):
         if not isinstance(value, str):
             raise TypeError(f"Property type must be 'str', not '{type(value).__name__}'")
-        validate_password(value)
-        self.__password = make_password(value)
+        self.__password = value
 
     @property
     def email(self):
@@ -201,7 +190,10 @@ class User:
 
     @classmethod
     def find_one(cls, filter_):
-        return cls(**cls.__collection.find_one(filter=filter_))
+        document = cls.__collection.find_one(filter=filter_)
+        if document is None:
+            return None
+        return cls(document)
 
     @classmethod
     def find(cls, filter_):
