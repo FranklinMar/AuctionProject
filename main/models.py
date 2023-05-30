@@ -36,8 +36,6 @@ class User:
     __roles = ('admin', 'mod', 'user', 'guest')
 
     def __init__(self, document):
-        #name, password, email, balance=0, role='user',
-        #image='images/users/default.jpg', items=[], chats=[]
         self.__name = document['name']
         self.__password = document['password']
         self.__email = document['email']
@@ -63,7 +61,7 @@ class User:
 
     @property
     def id(self):
-        return str(self.__id)
+        return self.__id
 
     @property
     def name(self):
@@ -394,22 +392,11 @@ class Item:
 class Chat:
     __collection = DB['Chat']
 
-    def __init__(self, name, admin, users, image='images/chats/default.jpg', messages=[]):
-        self.name = name
-        self.admin = admin
-        self.image = image
-        self.users = users
-        self.messages = messages
-        # print(vars(self))
-        # dictionary = self.get_vars()
-        dictionary = self.get_vars()
-        document = self.__collection.find_one(dictionary)
-        if not document:
-            self.__id = self.__collection.insert_one(dictionary).inserted_id
-        else:
-            for key in document:
-                setattr(self, key, document[key])
-        # self.__id = self.__collection.insert_one(dictionary).inserted_id
+    def __init__(self, document):
+        self.__user1 = document['user1']
+        self.__user2 = document['user2']
+        self.__messages = document['messages'] if 'messages' in document else []
+        self.__id = document['_id']
 
     def save(self):
         dictionary = self.get_vars()
@@ -428,67 +415,28 @@ class Chat:
         return self.__id
 
     @property
-    def name(self):
-        return self.__name
+    def user1(self):
+        return User.find_one({'_id':self.__user1})
 
-    @name.setter
-    def name(self, value):
-        if not isinstance(value, str):
-            raise TypeError(f"Property type must be 'str', not '{type(value).__name__}'")
-        self.__name = value
-
-    @property
-    def admin(self):
-        return self.__admin
-
-    @admin.setter
-    def admin(self, value):
-        if not isinstance(value, ObjectId):
-            raise TypeError(f"Property type must be 'ObjectId', not '{type(value).__name__}'")
-        if not DB['User'].find_one(value):
-            raise ValidationError(f"User with id of '{value.__id}' not found")
-        self.__admin = value
+    @user1.setter
+    def user1(self, value):
+        if not isinstance(value, User):
+            raise TypeError(f"Property type must be 'User', not '{type(value).__name__}'")
+        if value == self.user2:
+            raise ValueError(f"Value of property must be not value of value oter user")
+        self.__user1 = value
 
     @property
-    def users(self):
-        return self.__users
+    def user2(self):
+        return User.find_one({'_id': self.__user2})
 
-    @users.setter
-    def users(self, value):
-        if not isinstance(value, list):
-            raise TypeError(f"Property type must be a list of 'ObjectId', not '{type(value).__name__}'")
-        if not all(isinstance(item, ObjectId) for item in value):
-            raise TypeError(f"Property type inside list must be 'ObjectId'")
-        if len(value) != len(list(DB['User'].find({"id", {"$in": value}}))):
-            raise ValidationError(f"Not all users found")
-        self.__users = value
-
-    def users_list(self):
-        return [User(**document) for document in DB['User'].find({"id", {"$in": self.__users}})]
-
-    @property
-    def image(self):
-        return self.__image
-
-    @image.setter
-    def image(self, value):
-        file_storage = FileSystemStorage()
-        if isinstance(value, str):
-            if not file_storage.exists(value):
-                raise ValidationError('File does not exist in a storage')
-            filename = value
-        elif isinstance(value, InMemoryUploadedFile):
-            image = Image.open(value)
-            image.verify()
-            filename = f'images/chats/{hash_file(value)}.{value.content_type.split("/")[-1]}'
-            if not file_storage.exists(filename):
-                file_storage.save(filename, value)
-        else:
-            raise TypeError(f"Property type must be 'str' or 'InMemoryUploadedFile', not '{type(value).__name__}'")
-
-        # if not isinstance(value, str):
-        #     raise TypeError(f"Property type must be a number, not '{type(value).__name__}'")
-        self.__image = filename
+    @user2.setter
+    def user2(self, value):
+        if not isinstance(value, User):
+            raise TypeError(f"Property type must be 'User', not '{type(value).__name__}'")
+        if value == self.user1:
+            raise ValueError(f"Value of property must be not value of value oter user")
+        self.__user2 = value
 
     @property
     def messages(self):
@@ -513,18 +461,14 @@ class Chat:
 
     @classmethod
     def find_one(cls, filter_):
-        return cls(**cls.__collection.find_one(filter=filter_))
+        document = cls.__collection.find_one(filter=filter_)
+        if document is None:
+            return None
+        return cls(document)
 
     @classmethod
     def find(cls, filter_):
         return cls.__collection.find(filter=filter_)
-
-    # def all(self):
-    #     return self.__collection.find()
-    #
-    # def find(self, filter_):
-    #     return self.__collection.find(filter=filter_)
-
 
 class Message:
     __collection = DB['Message']

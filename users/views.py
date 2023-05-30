@@ -8,11 +8,11 @@ def user_id(request, id :str):
     user = User.find_one({"name": id})
     if user is None:
         return HttpResponse("<h1>Error<h1>")
-    return HttpResponse("<h1>id:"+user.id+"<h1><p>name:"+user.name+"</p>")
+    return HttpResponse("<p>name:"+user.name+"</p>")
 
 def settings(request, id :str):
     if 'name' in request.session and request.session['name'] == id:
         user = User.find_one({"name": id})
         if not (user is None):
-            return HttpResponse("<h1>id:" + user.id + "<h1><p>name:" + user.name + ", settings</p>")
+            return HttpResponse("<p>name:" + user.name + ", settings</p>")
     return HttpResponse("<h1>Error<h1>")
