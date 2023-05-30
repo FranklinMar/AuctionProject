@@ -2,6 +2,7 @@ import datetime
 from functools import partial
 
 from bson import ObjectId
+from AuctionProject.settings import MEDIA_ROOT
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db import models
 from pymongo import MongoClient
@@ -21,6 +22,7 @@ from datetime import datetime
 CLIENT = MongoClient(settings.DATABASES['default']['CONNECTION'])
 DB = CLIENT[settings.DATABASES['default']['NAME']]
 
+Default_image_url = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFUw3mx3zKkMbGCQriCSpAH-ZUAoxur55odw&usqp=CAU'
 
 def hash_file(file, block_size=65536):
     hasher = hashlib.sha256()
@@ -41,14 +43,13 @@ class User:
         self.__email = document['email']
         self.__balance = float(document['balance']) if 'balance' in document else 0
         self.__role = document['role'] if 'role' in document else 'user'
-        self.__image = document['image'] if 'image' in document else 'default'
+        self.__image = document['image'] if 'image' in document else Default_image_url
         self.items = document['items'] if 'items' in document else []
         self.chats = document['chats'] if 'chats' in document else []
         self.__id = document['_id']
 
-    def save(self):
-        dictionary = self.get_vars()  # {key.replace('_User__', ''): self.__dict__[key] for key in self.__dict__}
-        return self.__collection.update_one(filter={"_id": self.__id}, update=dictionary)
+    def update(self, set):
+        return self.__collection.update_one({"_id": self.__id}, set)
 
     def delete(self):
         return self.__collection.delete_one(filter={"_id": self.__id})

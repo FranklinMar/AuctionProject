@@ -1,0 +1,24 @@
+{% extends 'main/layout.html' %}
+{% load static %}
+
+{% block body %}
+<img src='{{ user.image }}' width='50%' ></img>
+<form method="post" action="{{request.path}}">
+  {% csrf_token %}
+  {{ image_form }}
+  <button type="submit" name="change_image">змінити зображення</button>
+</form>
+<div>
+  <h>Користувач {{ user.name }}</h>
+</div>
+<form method="post" action="{{request.path}}">
+  {% csrf_token %}
+  {{ email_form }}
+  <button type="submit" name="change_email">змінити</button>
+</form>
+<form method="post" action="{{request.path}}">
+  {% csrf_token %}
+  {{ password_form }}
+  <button type="submit" name="change_password">створити новий пароль</button>
+</form>
+{% endblock %}

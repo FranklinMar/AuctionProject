@@ -1,0 +1,10 @@
+{% extends 'main/layout.html' %}
+{% load static %}
+
+{% block body %}
+<img src='{{ user.image }}' width='50%' ></img>
+</br>
+<div>
+<h>Користувач {{ user.name }}</h>
+</div>
+{% endblock %}
