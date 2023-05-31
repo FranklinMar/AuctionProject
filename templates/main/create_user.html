@@ -4,7 +4,7 @@
 {% block body %}
 <form method="post" action="{{request.path}}">
   {% csrf_token %}
-  {{ create_user }}
+  {{ create }}
       <input type="hidden" name="back" value="{{ back }}">
   <button type="submit" name="enter">створити</button>
 </form>

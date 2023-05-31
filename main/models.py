@@ -208,7 +208,8 @@ class User:
             raise ValueError('this name is already exist')
         if not(User.find_one({'email': email}) == None):
             raise ValueError('account with this email is already exist')
-        dictionary = {'name':name,'password':password,'email':email,'role':role,'iamge':image}
+        validate_email(email)
+        dictionary = {'name':name,'password':make_password(password),'email':email,'role':role,'iamge':image}
         cls.__collection.insert_one(dictionary)
         return User.find_one({'name':name})
 

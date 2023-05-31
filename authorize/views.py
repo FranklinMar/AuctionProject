@@ -34,4 +34,4 @@ def create_user(request):
             return render(request, 'main/create_user.html', {'back': request.POST.get('back', ''),
                                                              'create': Create_user(),
                                                              'error': error})
-    return render(request, 'main/create_user.html', {'back': request.POST.get('back', ''), 'Login': Create_user()})
+    return render(request, 'main/create_user.html', {'back': request.POST.get('back', ''), 'create': Create_user()})
