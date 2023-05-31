@@ -5,6 +5,7 @@ from authorize.models import *
 from django.views.decorators.cache import never_cache
 from django.http import HttpResponseRedirect
 
+<<<<<<< HEAD
 
 @never_cache
 def login(request):
@@ -20,6 +21,23 @@ def login(request):
                                                       'error': 'Неправильний пароль або логін'})
     return render(request, 'main/signin.html', {'back': request.POST.get('back', ''), 'form': Login()})
 
+=======
+
+@never_cache
+def login(request):
+    if request.method == 'POST':
+        form = Login(request.POST)
+        if form.is_valid():
+            user = User.find_one({'name': form.cleaned_data['login']})
+            if not (user is None) and user.password == make_password(form.cleaned_data['password']):
+                request.session['name'] = user.name
+                request.session['image'] = user.image
+                return HttpResponseRedirect(request.POST.get('back', ''))
+            return render(request, 'main/signin.html', {'back': request.POST.get('back', ''), 'form': Login(),
+                                                      'error': 'Неправильний пароль або логін'})
+    return render(request, 'main/signin.html', {'back': request.POST.get('back', ''), 'form': Login()})
+
+>>>>>>> master
 
 def logout(request):
     request.session.pop('name')
@@ -40,4 +58,8 @@ def create_user(request):
             except ValueError as error:
                 return render(request, 'main/signup.html', {'back': request.POST.get('back', ''),
                                             'form': CreateUser(), 'error': error})
+<<<<<<< HEAD
     return render(request, 'main/signup.html', {'back': request.POST.get('back', ''), 'form': CreateUser()})
+=======
+    return render(request, 'main/signup.html', {'back': request.POST.get('back', ''), 'form': CreateUser()})
+>>>>>>> master

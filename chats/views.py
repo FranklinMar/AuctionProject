@@ -3,6 +3,7 @@ from main.models import Chat, User, Message
 from bson.objectid import ObjectId
 from django.shortcuts import render
 
+
 def chat_id(request, id :str):
     user2 = User.find_one({"name": id})
     if not (user2 is None) and 'name' in request.session:

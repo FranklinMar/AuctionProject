@@ -4,14 +4,16 @@ from main.models import User
 from users.models import *
 from django.views.decorators.csrf import csrf_protect
 
-def user_id(request, id :str):
+
+def user_id(request, id: str):
     user = User.find_one({"name": id})
     if user is None:
         return HttpResponse("<h1>Error<h1>")
     return render(request, 'main/user.html', {'user':user
         ,'is_own': 'name' in request.session and request.session['name'] == user.name})
 
-def settings(request, id :str):
+
+def settings(request, id: str):
     user = User.find_one({"name": id})
     if not (user is None) and 'name' in request.session and request.session['name'] == user.name:
         if request.method == 'POST':

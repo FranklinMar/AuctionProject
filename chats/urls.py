@@ -17,5 +17,5 @@ from django.urls import path
 from chats.views import chat_id
 
 urlpatterns = [
-    path('<str:id>/', chat_id),
+    path('<str:id>/', chat_id, name='Chat'),
 ]

@@ -5,4 +5,8 @@ urlpatterns = [
     path('login/', login, name='Login'),
     path('logout/', logout, name='Logout'),
     path('register/', create_user, name='Register'),
+<<<<<<< HEAD
 ]
+=======
+]
+>>>>>>> master
