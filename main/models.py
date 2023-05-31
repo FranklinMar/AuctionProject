@@ -542,10 +542,6 @@ class Message:
         self.__text = value
 
     @property
-    def user_name(self):
-        return self.__user.name
-
-    @property
     def user(self):
         return self.__user
 

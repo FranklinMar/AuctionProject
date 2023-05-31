@@ -12,8 +12,6 @@ def chat_id(request, id :str):
             chat.send(Message.create(user1,request.POST.get('text', '')))
         if chat is None:
             chat = Chat.create(user1,user2)
-        for message in chat.messages:
-            print(message.user)
         return render(request,'main/chat.html',{'chat':chat,'user2': chat.user1 \
             if chat.user2.name == request.session['name'] else chat.user2})
     return HttpResponse("<h1>Error<h1>")

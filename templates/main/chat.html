@@ -6,7 +6,7 @@
 <h>Користувач {{user2.name}}</h>
 {% for message in chat.messages %}
 <div style="background-color:yellow">
-    <h1>{{message.user_name}}</h1>
+    <h1>{{message.user.name}}</h1>
     <p>{{message.text}}</p>
     </br>
     <p>{{message.time}}</p>
