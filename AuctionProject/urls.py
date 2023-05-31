@@ -24,13 +24,10 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('main.urls')),
+    path('login/', include('authorize.urls')),
+    path('exit', include('authorize.urls')),
     path('user/', include('users.urls')),
-    # path('user/<str:id>/settings/', settings),
-    # path('user/<str:id>/', user_id),
-    # path('item/<str:id>/', item_id),
-    # path('auction/<str:id>/', auction),
     path('item/', include('items.urls')),
-    # path('chat/<str:id>/', chat_id),
     path('chat/', include('chats.urls')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + \
               static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

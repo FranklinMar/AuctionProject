@@ -2,9 +2,12 @@
 {% load static %}
 
 {% block body %}
-<img src='{{ user.image }}' width='50%' ></img>
+<img src='{{ user.image }}' width='400' ></img>
 </br>
 <div>
 <h>Користувач {{ user.name }}</h>
 </div>
+{% if is_own %}
+<button onclick="location.href='/user/{{user.name}}/settings/'">Налаштування</button>
+    {% endif %}
 {% endblock %}

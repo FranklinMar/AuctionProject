@@ -2,8 +2,8 @@
 {% load static %}
 
 {% block body %}
-<img src='{{ user.image }}' width='50%' ></img>
-<form method="post" action="{{request.path}}">
+<img src='{{ user.image }}' width='400' ></img>
+<form enctype="multipart/form-data" method="post" action="{{request.path}}">
   {% csrf_token %}
   {{ image_form }}
   <button type="submit" name="change_image">змінити зображення</button>

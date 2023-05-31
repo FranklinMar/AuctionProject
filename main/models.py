@@ -3,6 +3,7 @@ from functools import partial
 
 from bson import ObjectId
 from AuctionProject.settings import MEDIA_ROOT
+from AuctionProject.settings import MEDIA_ROOT
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db import models
 from pymongo import MongoClient
@@ -30,6 +31,10 @@ def hash_file(file, block_size=65536):
         hasher.update(buf)
     return hasher.hexdigest()
 
+def hash(text):
+    hash = hashlib.sha256()
+    hash.update(text.encode())
+    return str(hash.hexdigest())
 
 class User:
     __collection = DB['User']
@@ -82,7 +87,8 @@ class User:
     def password(self, value):
         if not isinstance(value, str):
             raise TypeError(f"Property type must be 'str', not '{type(value).__name__}'")
-        self.__password = value
+        self.__password = hash(value)
+        self.update({'$set': {'password': self.__password}})
 
     @property
     def email(self):
@@ -94,6 +100,7 @@ class User:
             raise TypeError(f"Property type must be 'str', not '{type(value).__name__}'")
         validate_email(value)
         self.__email = value
+        self.update({'$set': {'email': self.__email}})
 
     @property
     def balance(self):
@@ -127,8 +134,8 @@ class User:
     def image(self, value):
         file_storage = FileSystemStorage()
         if isinstance(value, str):
-            if not file_storage.exists(value):
-                raise ValidationError('File does not exist in a storage')
+            # if not file_storage.exists(value):
+            #     raise ValidationError('File does not exist in a storage')
             filename = value
         elif isinstance(value, InMemoryUploadedFile):
             image = Image.open(value)
@@ -136,12 +143,11 @@ class User:
             filename = f'images/users/{hash_file(value)}.{value.content_type.split("/")[-1]}'
             if not file_storage.exists(filename):
                 file_storage.save(filename, value)
+            filename = str(MEDIA_ROOT) + "/" + filename
         else:
             raise TypeError(f"Property type must be 'str' or 'InMemoryUploadedFile', not '{type(value).__name__}'")
-
-        # if not isinstance(value, str):
-        #     raise TypeError(f"Property type must be a number, not '{type(value).__name__}'")
         self.__image = filename
+        self.update({'$set': {'image': self.__image}})
 
     @property
     def items(self):

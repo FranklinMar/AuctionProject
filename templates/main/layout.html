@@ -20,7 +20,26 @@
     <body id="page-top">
         <!-- Navigation-->
         <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNav">
-            <div class="container">
+            <div class="container"  style=" display: inline-block">
+                {% if 'name' in request.session %}
+                <div>
+                    {% with user = User.find_one({'name':request.session['name']}) %}
+                 {{user.name}}
+                <form method="post" action="/exit/" style=" display: inline-block">
+                    {% csrf_token %}
+                  <input type="hidden" name="back" value="{{ request.path }}">
+                  <button type="submit" name="exit">вийти</button>
+                </form>
+               <img src="{{user.image}}" height="30" width="30" style=" display: inline-block">
+                    {% endwith %}
+                {% else %}
+                <form method="post" action="/login/" style=" display: inline-block">
+                    {% csrf_token %}
+                  <input type="hidden" name="back" value="{{ request.path }}">
+                  <button type="submit" name="login">вхід</button>
+                </form>
+                    </div>
+                {% endif %}
                 <a class="navbar-brand" href="{% url 'Home' %}#page-top"><img src="{% static 'main/img/navbar-logo.svg'%}" alt="..." /></a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
                     Menu
