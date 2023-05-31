@@ -23,4 +23,4 @@ def home(request):
     user = users.find_one()
     # print(type(user["_id"]))
     # return HttpResponse(f"<h1>Hello world<h1>{user['name']}")
-    return render(request, 'main/home.html')  # {"form": form}
+    return render(request, 'main/home.html', {"items": Item.all()})  # {"form": form}
