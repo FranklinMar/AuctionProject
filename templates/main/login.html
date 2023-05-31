@@ -1,0 +1,12 @@
+{% extends 'main/layout.html' %}
+{% load static %}
+
+{% block body %}
+<form method="post" action="{{request.path}}">
+  {% csrf_token %}
+  {{ Login }}
+      <input type="hidden" name="back" value="{{ back }}">
+  <button type="submit" name="enter">увійти</button>
+</form>
+<p>{{ error }}</p>
+{% endblock %}
