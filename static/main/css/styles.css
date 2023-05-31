@@ -609,7 +609,7 @@ progress {
   width: 100%;
   min-height: 100%;
   height: 100%;
-  max-height: 75%;
+  max-height: 400px;
 
 }
 
@@ -2082,7 +2082,8 @@ progress {
   margin-bottom: 0;
   line-height: 1.5;
   color: #212529;
-  background-color: transparent;
+  /*background-color: transparent;*/
+  background-color: #212529;
   border: solid transparent;
   border-width: 1px 0;
 }
@@ -2780,7 +2781,7 @@ textarea.form-control-lg {
 .btn {
   --bs-btn-padding-x: 0.75rem;
   --bs-btn-padding-y: 0.375rem;
-  --bs-btn-font-family: none;
+  --bs-btn-font-family: ;
   --bs-btn-font-size: 1rem;
   --bs-btn-font-weight: 400;
   --bs-btn-line-height: 1.5;
@@ -3619,7 +3620,7 @@ textarea.form-control-lg {
 .nav {
   --bs-nav-link-padding-x: 1rem;
   --bs-nav-link-padding-y: 0.5rem;
-  --bs-nav-link-font-weight: none;
+  --bs-nav-link-font-weight: ;
   --bs-nav-link-color: var(--bs-link-color);
   --bs-nav-link-hover-color: var(--bs-link-hover-color);
   --bs-nav-link-disabled-color: #6c757d;
@@ -3793,7 +3794,7 @@ textarea.form-control-lg {
 .navbar-nav {
   --bs-nav-link-padding-x: 0;
   --bs-nav-link-padding-y: 0.5rem;
-  --bs-nav-link-font-weight: none;
+  --bs-nav-link-font-weight: ;
   --bs-nav-link-color: var(--bs-navbar-color);
   --bs-nav-link-hover-color: var(--bs-navbar-hover-color);
   --bs-nav-link-disabled-color: var(--bs-navbar-disabled-color);
@@ -3900,7 +3901,7 @@ textarea.form-control-lg {
     width: auto !important;
     height: auto !important;
     visibility: visible !important;
-    background-color: transparent !important;
+    /*background-color: transparent !important;*/
     border: 0 !important;
     transform: none !important;
     transition: none;
@@ -3947,7 +3948,7 @@ textarea.form-control-lg {
     width: auto !important;
     height: auto !important;
     visibility: visible !important;
-    background-color: transparent !important;
+    /*background-color: transparent !important;*/
     border: 0 !important;
     transform: none !important;
     transition: none;
@@ -3994,7 +3995,7 @@ textarea.form-control-lg {
     width: auto !important;
     height: auto !important;
     visibility: visible !important;
-    background-color: transparent !important;
+    /*background-color: transparent !important;*/
     border: 0 !important;
     transform: none !important;
     transition: none;
@@ -4041,7 +4042,7 @@ textarea.form-control-lg {
     width: auto !important;
     height: auto !important;
     visibility: visible !important;
-    background-color: transparent !important;
+    /*background-color: transparent !important;*/
     border: 0 !important;
     transform: none !important;
     transition: none;
@@ -4088,7 +4089,7 @@ textarea.form-control-lg {
     width: auto !important;
     height: auto !important;
     visibility: visible !important;
-    background-color: transparent !important;
+    /*background-color: transparent !important;*/
     border: 0 !important;
     transform: none !important;
     transition: none;
@@ -4134,7 +4135,7 @@ textarea.form-control-lg {
   width: auto !important;
   height: auto !important;
   visibility: visible !important;
-  background-color: transparent !important;
+  /*background-color: transparent !important;*/
   border: 0 !important;
   transform: none !important;
   transition: none;
@@ -4167,14 +4168,14 @@ textarea.form-control-lg {
   --bs-card-border-width: 1px;
   --bs-card-border-color: var(--bs-border-color-translucent);
   --bs-card-border-radius: 0.375rem;
-  --bs-card-box-shadow: none;
+  --bs-card-box-shadow: ;
   --bs-card-inner-border-radius: calc(0.375rem - 1px);
   --bs-card-cap-padding-y: 0.5rem;
   --bs-card-cap-padding-x: 1rem;
   --bs-card-cap-bg: rgba(0, 0, 0, 0.03);
-  --bs-card-cap-color: none;
-  --bs-card-height: none;
-  --bs-card-color: none;
+  --bs-card-cap-color: ;
+  --bs-card-height: ;
+  --bs-card-color: ;
   --bs-card-bg: #fff;
   --bs-card-img-overlay-padding: 1rem;
   --bs-card-group-margin: 0.75rem;
@@ -4481,8 +4482,8 @@ textarea.form-control-lg {
   --bs-breadcrumb-padding-x: 0;
   --bs-breadcrumb-padding-y: 0;
   --bs-breadcrumb-margin-bottom: 1rem;
-  --bs-breadcrumb-bg: none;
-  --bs-breadcrumb-border-radius: none;
+  --bs-breadcrumb-bg: ;
+  --bs-breadcrumb-border-radius: ;
   --bs-breadcrumb-divider-color: #6c757d;
   --bs-breadcrumb-item-padding-x: 0.5rem;
   --bs-breadcrumb-item-active-color: #6c757d;
@@ -5183,7 +5184,7 @@ textarea.form-control-lg {
   --bs-toast-spacing: 1.5rem;
   --bs-toast-max-width: 350px;
   --bs-toast-font-size: 0.875rem;
-  --bs-toast-color: none;
+  --bs-toast-color: ;
   --bs-toast-bg: rgba(255, 255, 255, 0.85);
   --bs-toast-border-width: 1px;
   --bs-toast-border-color: var(--bs-border-color-translucent);
@@ -5249,7 +5250,7 @@ textarea.form-control-lg {
   --bs-modal-width: 500px;
   --bs-modal-padding: 1rem;
   --bs-modal-margin: 0.5rem;
-  --bs-modal-color: none;
+  --bs-modal-color: ;
   --bs-modal-bg: #fff;
   --bs-modal-border-color: var(--bs-border-color-translucent);
   --bs-modal-border-width: 1px;
@@ -5263,7 +5264,7 @@ textarea.form-control-lg {
   --bs-modal-header-border-width: 1px;
   --bs-modal-title-line-height: 1.5;
   --bs-modal-footer-gap: 0.5rem;
-  --bs-modal-footer-bg: none;
+  --bs-modal-footer-bg: ;
   --bs-modal-footer-border-color: var(--bs-border-color);
   --bs-modal-footer-border-width: 1px;
   position: fixed;
@@ -5543,7 +5544,7 @@ textarea.form-control-lg {
   --bs-tooltip-max-width: 200px;
   --bs-tooltip-padding-x: 0.5rem;
   --bs-tooltip-padding-y: 0.25rem;
-  --bs-tooltip-margin: none;
+  --bs-tooltip-margin: ;
   --bs-tooltip-font-size: 0.875rem;
   --bs-tooltip-color: #fff;
   --bs-tooltip-bg: #000;
@@ -5654,7 +5655,7 @@ textarea.form-control-lg {
   --bs-popover-header-padding-x: 1rem;
   --bs-popover-header-padding-y: 0.5rem;
   --bs-popover-header-font-size: 1rem;
-  --bs-popover-header-color: none;
+  --bs-popover-header-color: ;
   --bs-popover-header-bg: #f0f0f0;
   --bs-popover-body-padding-x: 1rem;
   --bs-popover-body-padding-y: 1rem;
@@ -6070,7 +6071,7 @@ textarea.form-control-lg {
   --bs-offcanvas-height: 30vh;
   --bs-offcanvas-padding-x: 1rem;
   --bs-offcanvas-padding-y: 1rem;
-  --bs-offcanvas-color: none;
+  --bs-offcanvas-color: ;
   --bs-offcanvas-bg: #fff;
   --bs-offcanvas-border-width: 1px;
   --bs-offcanvas-border-color: var(--bs-border-color-translucent);
@@ -10925,7 +10926,7 @@ p {
     padding-top: 1.5rem;
     padding-bottom: 1.5rem;
     border: none;
-    background-color: transparent;
+    /*background-color: transparent;*/
     transition: padding-top 0.3s ease-in-out, padding-bottom 0.3s ease-in-out;
   }
   #mainNav .navbar-brand {
@@ -10939,7 +10940,7 @@ p {
   #mainNav.navbar-shrink {
     padding-top: 1rem;
     padding-bottom: 1rem;
-    background-color: #212529;
+    /*background-color: #212529;*/
   }
   #mainNav.navbar-shrink .navbar-brand {
     font-size: 1.25em;
@@ -11010,20 +11011,20 @@ header.masthead .masthead-heading {
     /* justify-content: space-between; */
 }
 
-#portfolio .portfolio-item {
+#item .item-item {
   max-width: 26rem;
   margin-left: auto;
   margin-right: auto;
   background-color: #fff;
 }
-#portfolio .portfolio-item .portfolio-link {
+#item .item-item .item-link {
   position: relative;
   display: block;
   /* margin: 0 auto; */
   max-height: 75%;
   min-height: 75%;
 }
-#portfolio .portfolio-item .portfolio-link .portfolio-hover {
+#item .item-item .item-link .item-hover {
   display: flex;
   position: absolute;
   width: 100%;
@@ -11034,55 +11035,55 @@ header.masthead .masthead-heading {
   opacity: 0;
   transition: opacity ease-in-out 0.25s;
 }
-#portfolio .portfolio-item .portfolio-link .portfolio-hover .portfolio-hover-content {
+#item .item-item .item-link .item-hover .item-hover-content {
   font-size: 1.25rem;
   color: white;
 }
-#portfolio .portfolio-item .portfolio-link:hover .portfolio-hover {
+#item .item-item .item-link:hover .item-hover {
   opacity: 1;
 }
-#portfolio .portfolio-item .portfolio-caption {
+#item .item-item .item-caption {
   /* padding: 1.5rem; */
   text-align: center;
 }
-#portfolio .portfolio-item .portfolio-caption .portfolio-caption-heading {
+#item .item-item .item-caption .item-caption-heading {
   font-size: 1.5rem;
   font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   font-weight: 700;
   margin-bottom: 0;
 }
-#portfolio .portfolio-item .portfolio-caption .portfolio-caption-subheading {
+#item .item-item .item-caption .item-caption-subheading {
   font-style: italic;
   font-family: "Roboto Slab", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 
-.portfolio-modal .modal-dialog {
+.item-modal .modal-dialog {
   margin: 1rem;
   max-width: 100vw;
 }
-.portfolio-modal .modal-content {
+.item-modal .modal-content {
   padding-top: 6rem;
   text-align: center;
 }
-.portfolio-modal .modal-content h2, .portfolio-modal .modal-content .h2 {
+.item-modal .modal-content h2, .item-modal .modal-content .h2 {
   font-size: 3rem;
   line-height: 3rem;
 }
-.portfolio-modal .modal-content p.item-intro {
+.item-modal .modal-content p.item-intro {
   font-style: italic;
   margin-bottom: 2rem;
   font-family: "Roboto Slab", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
-.portfolio-modal .modal-content p {
+.item-modal .modal-content p {
   margin-bottom: 2rem;
 }
 
-.portfolio-modal .modal-content img {
+.item-modal .modal-content img {
     height: 100%;
     width: 100%;
   margin-bottom: 2rem;
 }
-.portfolio-modal .close-modal {
+.item-modal .close-modal {
   position: absolute;
   top: 1.5rem;
   right: 1.5rem;
@@ -11091,7 +11092,7 @@ header.masthead .masthead-heading {
   cursor: pointer;
   background-color: transparent;
 }
-.portfolio-modal .close-modal:hover {
+.item-modal .close-modal:hover {
   opacity: 0.3;
 }
 

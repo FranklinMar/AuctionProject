@@ -38,9 +38,9 @@ class User:
     # __chats = DB['Chat']
     __roles = ('admin', 'mod', 'user', 'guest')
 
-    def __init__(self, id, name, password, email, balance=0, role='user',
+    def __init__(self, _id, name, password, email, balance=0, role='user',
                  image='images/users/default.png', items=[], chats=[]):
-        self.__id = id
+        self.__id = _id
         self.__name = name
         self.__password = password
         self.__email = email
@@ -51,18 +51,21 @@ class User:
         self.__chats = chats
 
     def save(self):
-        dictionary = self.get_vars()  # {key.replace('_User__', ''): self.__dict__[key] for key in self.__dict__}
-        return self.__collection.update_one(filter={"_id": self.__id}, update=dictionary)
+        # dictionary = self.get_vars()  # {key.replace('_User__', ''): self.__dict__[key] for key in self.__dict__}
+        # dictionary.pop('id')
+        return self.__collection.update_one(filter={"_id": self.__id}, update=self.get_vars())
 
     @classmethod
-    def update(cls, user):
-        return cls.__collection.update_one({"_id": user.__id}, user.get_vars())
+    def update(cls, obj):
+        return cls.__collection.update_one({"_id": obj.__id}, obj.get_vars())
 
     def delete(self):
         return self.__collection.delete_one(filter={"_id": self.__id})
 
     def get_vars(self):
-        return {key.replace('_User__', ''): self.__dict__[key] for key in self.__dict__}
+        dictionary = {key.replace('_User__', ''): self.__dict__[key] for key in self.__dict__}
+        dictionary.pop('id')
+        return dictionary
 
     def try_login(self, password):
         return make_password(password) == self.password
@@ -75,8 +78,8 @@ class User:
     def id(self, value):
         if not isinstance(value, ObjectId):
             raise TypeError(f"Property type must be 'ObjectId', not '{type(value).__name__}'")
-        if not self.__collection.find_one({"_id": value}):
-            raise ValidationError(f"Object with Id of {value} not found")
+        # if not self.__collection.find_one({"_id": value}):
+        #     raise ValidationError(f"Object with Id of {value} not found")
         self.__id = value
 
     @property
@@ -170,7 +173,7 @@ class User:
     @items.setter
     def items(self, value):
         if not isinstance(value, list):
-            raise TypeError(f"Property type must be a list of 'str', not '{type(value).__name__}'")
+            raise TypeError(f"Property type must be a list of 'ObjectId', not '{type(value).__name__}'")
         if not all(isinstance(item, ObjectId) for item in value):
             raise TypeError(f"Property type inside list must be 'ObjectId'")
         if len(value) != len(list(DB['Item'].find({"_id": {"$in": value}}))):
@@ -186,7 +189,7 @@ class User:
     @chats.setter
     def chats(self, value):
         if not isinstance(value, list):
-            raise TypeError(f"Property type must be a list of 'str', not '{type(value).__name__}'")
+            raise TypeError(f"Property type must be a list of 'ObjectId', not '{type(value).__name__}'")
         if not all(isinstance(item, ObjectId) for item in value):
             raise TypeError(f"Property type inside list must be 'ObjectId'")
         if len(value) != len(list(DB['Chat'].find({"_id": {"$in": value}}))):
@@ -205,10 +208,11 @@ class User:
         return [cls(**document) for document in cls.__collection.find()]
 
     @classmethod
-    def find_one(cls, filter_):
+    def find_one(cls, filter_=None):
         document = cls.__collection.find_one(filter=filter_)
         if document is None:
             return None
+        document['id'] = document.pop('_id')
         return cls(**document)
 
     @classmethod
@@ -216,18 +220,15 @@ class User:
         return cls.__collection.find(filter=filter_)
 
     @classmethod
-    def create(cls, name, password, email, role='user', image=''):
-        if len(name) <= 0:
-            raise ValueError('name should be written')
-        if len(email) <= 0:
-            raise ValueError('email should be written')
-        if User.find_one({'name': name}):
-            raise ValueError('this name is already exist')
-        if User.find_one({'email': email}):
-            raise ValueError('account with this email is already exist')
-        dictionary = {'name': name, 'password': password, 'email': email, 'role': role, 'image': image}
-        cls.__collection.insert_one(dictionary)
-        return User.find_one({'name': name})
+    def create(cls, name, password, email, balance=0, role='user', image='images/users/default.png',
+               items=[], chats=[]):
+        # if User.find_one({'name': name}):
+        #     raise ValidationError('This name is already exists')
+        # if User.find_one({'email': email}):
+        #     raise ValidationError('Account with this email is already exists')
+        user = cls(None, name, password, email, balance, role, image, items, chats)
+        user.id = cls.__collection.insert_one(user.get_vars()).inserted_id
+        return user
 
 
 class Auction:
@@ -306,8 +307,8 @@ class Auction:
 class Item:
     __collection = DB['Item']
 
-    def __init__(self, id, name, description, owner, image='images/items/default.jpg', auction=None):
-        self.__id = id
+    def __init__(self, _id, name, description, owner, image='images/items/default.jpg', auction=None):
+        self.__id = _id
         self.__name = name
         self.__description = description
         self.__owner = owner
@@ -326,12 +327,18 @@ class Item:
         dictionary = self.get_vars()
         return self.__collection.update_one(filter={"_id": self.__id}, update=dictionary)
 
+    @classmethod
+    def update(cls, obj):
+        return cls.__collection.update_one({"_id": obj.__id}, obj.get_vars())
+
     def delete(self):
         return self.__collection.delete_one(filter={"_id": self.__id})
 
     def get_vars(self):
         dictionary = {key.replace('_Item__', ''): self.__dict__[key] for key in self.__dict__}
         dictionary['auction'] = self.auction.get_vars() if self.auction else self.auction
+        dictionary['owner'] = self.owner.id
+        dictionary.pop('id')
         return dictionary
 
     @property
@@ -342,8 +349,8 @@ class Item:
     def id(self, value):
         if not isinstance(value, ObjectId):
             raise TypeError(f"Property type must be 'ObjectId', not '{type(value).__name__}'")
-        if not self.__collection.find_one({"_id": value}):
-            raise ValidationError(f"Object with Id of {value} not found")
+        # if not self.__collection.find_one({"_id": value}):
+        #     raise ValidationError(f"Object with Id of {value} not found")
         self.__id = value
 
     @property
@@ -377,6 +384,9 @@ class Item:
         if not DB['User'].find_one(value):
             raise ValidationError(f"User with id of '{value.__id}' not found")
         self.__owner = value
+
+    def owner_user(self):
+        return User.find_one({"_id": self.owner})
 
     @property
     def image(self):
@@ -417,26 +427,40 @@ class Item:
         return [cls(**document) for document in cls.__collection.find()]
 
     @classmethod
-    def find_one(cls, filter_):
-        return cls(**cls.__collection.find_one(filter=filter_))
+    def find_one(cls, filter_=None):
+        document = cls.__collection.find_one(filter=filter_)
+        if not document:
+            return document
+        document['id'] = document.pop('_id')
+        return cls(**document)
 
     @classmethod
     def find(cls, filter_):
         return cls.__collection.find(filter=filter_)
 
+    @classmethod
+    def create(cls, name, description, owner, image='images/items/default.jpg', auction=None):
+        item = cls(None, name, description, owner, image, auction)
+        item.id = cls.__collection.insert_one(item.get_vars()).inserted_id
+        return item
+
 
 class Chat:
     __collection = DB['Chat']
 
-    def __init__(self, id, user1, user2, messages=[]):
+    def __init__(self, _id, user1, user2, messages=[]):
         self.user1 = user1
         self.user2 = user2
         self.messages = messages
-        self.id = id
+        self.id = _id
 
     def save(self):
         dictionary = self.get_vars()
         return self.__collection.update_one(filter={"_id": self.__id}, update=dictionary)
+
+    @classmethod
+    def update(cls, obj):
+        return cls.__collection.update_one({"_id": obj.__id}, obj.get_vars())
 
     def delete(self):
         return self.__collection.delete_one(filter={"_id": self.__id})
@@ -455,8 +479,8 @@ class Chat:
     def id(self, value):
         if not isinstance(value, ObjectId):
             raise TypeError(f"Property type must be 'ObjectId', not '{type(value).__name__}'")
-        if not self.__collection.find_one({"_id": value}):
-            raise ValidationError(f"Object with Id of {value} not found")
+        # if not self.__collection.find_one({"_id": value}):
+        #     raise ValidationError(f"Object with Id of {value} not found")
         self.__id = value
 
     @property
@@ -469,7 +493,7 @@ class Chat:
             raise TypeError(f"Property type must be 'User', not '{type(value).__name__}'")
         if value == self.user2:
             raise ValueError(f"Value of property must be not value of value other user")
-        self.__user1 = value
+        self.__user1 = value.id
 
     @property
     def user2(self):
@@ -481,7 +505,7 @@ class Chat:
             raise TypeError(f"Property type must be 'User', not '{type(value).__name__}'")
         if value == self.user1:
             raise ValueError(f"Value of property must be not value of value other user")
-        self.__user2 = value
+        self.__user2 = value.id
 
     @property
     def messages(self):
@@ -505,22 +529,28 @@ class Chat:
         return [cls(**document) for document in cls.__collection.find()]
 
     @classmethod
-    def find_one(cls, filter_):
+    def find_one(cls, filter_=None):
         document = cls.__collection.find_one(filter=filter_)
         if not document:
             return document
+        document['id'] = document.pop('_id')
         return cls(**document)
 
     @classmethod
     def find(cls, filter_):
         return cls.__collection.find(filter=filter_)
 
+    @classmethod
+    def create(cls, user1, user2, messages=[]):
+        chat = cls(None, user1, user2, messages)
+        chat.id = chat.__collection.insert_one(chat.get_vars()).inserted_id
+
 
 class Message:
     __collection = DB['Message']
 
-    def __init__(self, id, text, user, image=None, url=None):
-        self.__id = id
+    def __init__(self, _id, text, user, image=None, url=None):
+        self.__id = _id
         self.__text = text
         self.__user = user
         self.__time = datetime.utcnow()
@@ -537,11 +567,16 @@ class Message:
         dictionary = self.get_vars()
         return self.__collection.update_one(filter={"_id": self.__id}, update=dictionary)
 
+    @classmethod
+    def update(cls, obj):
+        return cls.__collection.update_one({"_id": obj.__id}, obj.get_vars())
+
     def delete(self):
         return self.__collection.delete_one(filter={"_id": self.__id})
 
     def get_vars(self):
         dictionary = {key.replace('_Message__', ''): self.__dict__[key] for key in self.__dict__}
+        dictionary.pop('id')
         return dictionary
 
     @property
@@ -595,12 +630,22 @@ class Message:
         return [cls(**document) for document in cls.__collection.find()]
 
     @classmethod
-    def find_one(cls, filter_):
-        return cls(**cls.__collection.find_one(filter=filter_))
+    def find_one(cls, filter_=None):
+        document = cls.__collection.find_one(filter=filter_)
+        if not document:
+            return document
+        document['id'] = document.pop('_id')
+        return cls(**document)
 
     @classmethod
     def find(cls, filter_):
         return cls.__collection.find(filter=filter_)
+
+    @classmethod
+    def create(cls, text, user, image=None, url=None):
+        message = cls(None, text, user, image, url)
+        message.id = cls.__collection.insert_one(message.get_vars())
+        return message
 
 # def min_value_allowed(value):
 #     if value >= 0:

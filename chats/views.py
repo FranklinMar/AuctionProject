@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from main.models import Chat
 from bson.objectid import ObjectId
 
+
 def chat_id(request, id :str):
     chat = Chat.find_one({"_id": ObjectId(id)})
     if not (chat is None):
