@@ -21,22 +21,12 @@ from datetime import datetime
 CLIENT = MongoClient(settings.DATABASES['default']['CONNECTION'])
 DB = CLIENT[settings.DATABASES['default']['NAME']]
 
-<<<<<<< HEAD
-=======
-# Default_image_url = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFUw3mx3zKkMbGCQriCSpAH-ZUAoxur55odw&usqp=CAU'
-
-
->>>>>>> master
 def hash_file(file, block_size=65536):
     hasher = hashlib.sha256()
     for buf in iter(partial(file.read, block_size), b''):
         hasher.update(buf)
     return hasher.hexdigest()
 
-<<<<<<< HEAD
-=======
-
->>>>>>> master
 class User:
     __collection = DB['User']
     # __items = DB['Item']
@@ -106,12 +96,7 @@ class User:
         if not isinstance(value, str):
             raise TypeError(f"Property type must be 'str', not '{type(value).__name__}'")
         self.__password = make_password(value)
-<<<<<<< HEAD
         self.update({'$set': {'password': self.__password}})
-=======
-        # self.update({'$set': {'password': self.__password}})
-        self.save()
->>>>>>> master
 
     @property
     def email(self):
@@ -229,7 +214,6 @@ class User:
         return cls.__collection.find(filter=filter_)
 
     @classmethod
-<<<<<<< HEAD
     def create(cls, name, password, email, role='user',image=''):
         if len(name) <= 0:
             raise ValueError('name should be written')
@@ -243,18 +227,6 @@ class User:
         dictionary = {'name':name,'password':make_password(password),'email':email,'role':role,'iamge':image}
         cls.__collection.insert_one(dictionary)
         return User.find_one({'name':name})
-=======
-    def create(cls, name, password, email, balance=0, role='user', image='images/users/default.png',
-               items=[], chats=[]):
-        # if User.find_one({'name': name}):
-        #     raise ValidationError('This name is already exists')
-        # if User.find_one({'email': email}):
-        #     raise ValidationError('Account with this email is already exists')
-        user = cls(None, name, password, email, balance, role, image, items, chats)
-        user.id = cls.__collection.insert_one(user.get_vars()).inserted_id
-        return user
->>>>>>> master
-
 
 class Auction:
 
@@ -473,20 +445,12 @@ class Item:
 class Chat:
     __collection = DB['Chat']
 
-<<<<<<< HEAD
     def __init__(self, document):
         self.__user1 = User.find_one({'_id':ObjectId(document['user1'])})
         self.__user2 = User.find_one({'_id':ObjectId(document['user2'])})
         self.__messages = document['messages'] if 'messages' in document else []
         self.__messages = [Message.find_one({'_id':ObjectId(id)}) for id in self.__messages]
         self.__id = document['_id']
-=======
-    def __init__(self, _id, user1, user2, messages=[]):
-        self.user1 = user1
-        self.user2 = user2
-        self.messages = messages
-        self.id = _id
->>>>>>> master
 
     def save(self):
         dictionary = self.get_vars()
@@ -519,11 +483,7 @@ class Chat:
 
     @property
     def user1(self):
-<<<<<<< HEAD
         return self.__user1
-=======
-        return User.find_one({'_id': self.__user1})
->>>>>>> master
 
     @user1.setter
     def user1(self, value):
@@ -587,7 +547,6 @@ class Chat:
         return cls.__collection.find(filter=filter_)
 
     @classmethod
-<<<<<<< HEAD
     def create(cls, user1, user2):
         dictionary = {'user1': ObjectId(user1.id),'user2': ObjectId(user2.id)}
         cls.__collection.insert_one(dictionary)
@@ -599,17 +558,10 @@ class Chat:
 
     def update(self, set):
         return self.__collection.update_one({"_id": self.__id}, set)
-=======
-    def create(cls, user1, user2, messages=[]):
-        chat = cls(None, user1, user2, messages)
-        chat.id = chat.__collection.insert_one(chat.get_vars()).inserted_id
->>>>>>> master
 
 
 class Message:
     __collection = DB['Message']
-
-<<<<<<< HEAD
 
     def __init__(self, document):
         self.__user = User.find_one({'_id':ObjectId(document['user'])})
@@ -618,21 +570,6 @@ class Message:
         self.__url = document['url']
         self.__image = document['image']
         self.__id = document['_id']
-=======
-    def __init__(self, _id, text, user, image=None, url=None):
-        self.__id = _id
-        self.__text = text
-        self.__user = user
-        self.__time = datetime.utcnow()
-        # dictionary = self.get_vars()
-        # document = self.__collection.find_one(dictionary)
-        # if not document:
-        #     self.__id = self.__collection.insert_one(dictionary).inserted_id
-        # else:
-        #     for key in document:
-        #         setattr(self, key, document[key])
-        # self.__id = self.__collection.insert_one(dictionary).inserted_id
->>>>>>> master
 
     def save(self):
         dictionary = self.get_vars()
@@ -699,24 +636,14 @@ class Message:
         return [cls(document) for document in cls.__collection.find()]
 
     @classmethod
-<<<<<<< HEAD
     def find_one(cls, filter_):
         return cls(cls.__collection.find_one(filter=filter_))
-=======
-    def find_one(cls, filter_=None):
-        document = cls.__collection.find_one(filter=filter_)
-        if not document:
-            return document
-        document['id'] = document.pop('_id')
-        return cls(**document)
->>>>>>> master
 
     @classmethod
     def find(cls, filter_):
         return cls.__collection.find(filter=filter_)
 
     @classmethod
-<<<<<<< HEAD
     def create(cls, user,text, url='', image=''):
         if len(text) == 0:
             raise ValueError('text should be written')
@@ -726,12 +653,6 @@ class Message:
                       'time' : str(datetime.utcnow())}
         cls.__collection.insert_one(dictionary)
         return Message.find_one({'time': dictionary['time']})
-=======
-    def create(cls, text, user, image=None, url=None):
-        message = cls(None, text, user, image, url)
-        message.id = cls.__collection.insert_one(message.get_vars())
-        return message
->>>>>>> master
 
 # def min_value_allowed(value):
 #     if value >= 0:
