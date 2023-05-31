@@ -15,7 +15,7 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth.hashers import make_password  # , check_password
 from django.contrib.auth.password_validation import validate_password
 from django.core.files.storage import FileSystemStorage
-from PIL import Image
+#from PIL import Image
 import hashlib
 from datetime import datetime
 # from django.utils import timezone
@@ -203,11 +203,20 @@ class User:
     @classmethod
     def find(cls, filter_):
         return cls.__collection.find(filter=filter_)
-    # def all(self):
-    #     return self.__collection.find()
-    #
-    # def find(self, filter_):
-    #     return self.__collection.find(filter=filter_)
+
+    @classmethod
+    def create(cls, name, password, email, role='user',image=''):
+        if len(name) <= 0:
+            raise ValueError('name should be written')
+        if len(email) <= 0:
+            raise ValueError('email should be written')
+        if not (User.find_one({'name': name}) == None):
+            raise ValueError('this name is already exist')
+        if not(User.find_one({'email': email}) == None):
+            raise ValueError('account with this email is already exist')
+        dictionary = {'name':name,'password':password,'email':email,'role':role,'iamge':image}
+        cls.__collection.insert_one(dictionary)
+        return User.find_one({'name':name})
 
 
 class Auction:

@@ -23,17 +23,15 @@
             <div class="container"  style=" display: inline-block">
                 {% if 'name' in request.session %}
                 <div>
-                    {% with user = User.find_one({'name':request.session['name']}) %}
                  {{user.name}}
-                <form method="post" action="/exit/" style=" display: inline-block">
+                <form method="post" action="/auth/exit/" style=" display: inline-block">
                     {% csrf_token %}
                   <input type="hidden" name="back" value="{{ request.path }}">
                   <button type="submit" name="exit">вийти</button>
                 </form>
                <img src="{{user.image}}" height="30" width="30" style=" display: inline-block">
-                    {% endwith %}
                 {% else %}
-                <form method="post" action="/login/" style=" display: inline-block">
+                <form method="post" action="/auth/login/" style=" display: inline-block">
                     {% csrf_token %}
                   <input type="hidden" name="back" value="{{ request.path }}">
                   <button type="submit" name="login">вхід</button>
