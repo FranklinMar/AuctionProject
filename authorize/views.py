@@ -14,6 +14,7 @@ def login(request):
             user = User.find_one({'name': form.cleaned_data['login']})
             if not (user is None) and user.password == make_password(form.cleaned_data['password']):
                 request.session['name'] = user.name
+                request.session['image'] = user.image
                 return HttpResponseRedirect(request.POST.get('back', ''))
             return render(request, 'main/signin.html', {'back': request.POST.get('back', ''), 'form': Login(),
                                                       'error': 'Неправильний пароль або логін'})
