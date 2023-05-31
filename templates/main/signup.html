@@ -1,0 +1,66 @@
+{% extends 'main/layouts/layout.html' %}
+{% load static %}
+
+{% block body %}
+<!-- Masthead-->
+<header class="masthead h-auto" style="--url: url({% static 'main/img/signup.jpg' %})">
+  <div class="container bg-dark w-25 p-4 rounded">
+    <div class="masthead-subheading">Sign up</div>
+    <form method="POST" action="{{ request.path }}" class="text-white card border-0 bg-transparent align-items-center">
+      <div class="form-floating bg-dark mb-2 w-75">
+        {% csrf_token %}
+        <input type="text" name="name" id="name" class="bg-dark text-white form-control form-control-sm" placeholder="Name" required>
+        <label for="name" class="form-label bg-transparent">Name</label>
+      </div>
+      <div class="form-floating bg-dark mb-2 w-75">
+        {% csrf_token %}
+        <input type="email" name="email" id="email" class="bg-dark text-white form-control form-control-sm" placeholder="Email address" required>
+        <label for="email" class="form-label bg-transparent">Email address</label>
+      </div>
+      <div class="form-floating bg-dark mb-2 w-75">
+        {% csrf_token %}
+        <input type="password" name="password" id="password" class="bg-dark text-white form-control form-control-sm" placeholder="Password" required>
+        <label for="password" class="form-label bg-transparent">Password</label>
+      </div>
+      <div class="form-floating bg-dark w-75">
+        {% csrf_token %}
+        <input type="password" name="password confirmation" id="confirm_password" class="bg-dark text-white form-control form-control-sm" placeholder="Confirm Password" required>
+        <label for="confirm_password" class="form-label bg-transparent">Confirm Password</label>
+      </div>
+      <div class="text-success mb-1">&NonBreakingSpace;
+      </div>
+      <a href="{% url 'Login' %}" class="link-light mb-1">Already signed up?</a>
+      <button id="submit" type="submit" class="w-75 mb-4 btn btn-warning text-white btn-xl text-uppercase" href="#recipe" disabled>Sign Up</button>
+    </form>     
+  </div>
+</header>
+<script >
+    let Password = document.querySelector('#password');
+    let ConfirmPassword = document.querySelector('#confirm_password');
+    let Button = document.querySelector("#submit");
+    document.querySelectorAll('input[type="password"]')
+        .forEach(input => input.addEventListener("change", function (){
+            if (!(Password.value === '' || ConfirmPassword.value === '')) {
+                let div = document.querySelectorAll('form div');
+                div = div[div.length - 1];
+                if (div.getAttribute('class') != null && div.getAttribute('class').includes('form-floating')) {
+                    div.after(document.createElement('div'));
+                    div = div.nextSibling;
+                }
+            if (Password.value !== ConfirmPassword.value) {
+                div.setAttribute('class', 'text-danger');
+                div.innerText = 'Passwords do not match';
+                Button.disabled = true;
+            } else if (Password.value.length < 8) {
+                div.setAttribute('class', 'text-danger');
+                div.innerText = 'Password size must be at least 8';
+                Button.disabled = true;
+            } else {
+                div.setAttribute('class', 'text-success');
+                div.innerText = 'Passwords match';
+                Button.disabled = false;
+            }
+        }
+    }));
+</script>
+{% endblock %}

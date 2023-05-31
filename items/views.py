@@ -4,9 +4,13 @@ from django.http import HttpResponse
 
 # Create your views here.
 
-def item_id(request, id :str):
+def item_id(request, id: str):
     return HttpResponse("<h1>item: "+id+"<h1>")
 
 
-def auction(request, id :str):
+def auction(request, id: str):
     return HttpResponse("<h1>auction of item: "+id+"<h1>")
+
+
+def items(request):
+    return render(request, 'main/items.html', {"items": []})

@@ -17,6 +17,6 @@ from django.urls import path
 from users.views import user_id, settings
 
 urlpatterns = [
-    path('<str:id>/settings/', settings),
-    path('<str:id>/', user_id),
+    path('<str:id>/settings/', settings, name='Settings'),
+    path('<str:id>/', user_id, name='Profile'),
 ]

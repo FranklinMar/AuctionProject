@@ -12,9 +12,9 @@ def login(request):
         if not (user is None) and user.password == make_password(form.cleaned_data['password']):
             request.session['name'] = user.name
             return HttpResponseRedirect(request.POST.get('back', ''))
-        return render(request, 'main/login.html', {'back': request.POST.get('back', ''), 'Login': Login(),\
+        return render(request, 'main/signin.html', {'back': request.POST.get('back', ''), 'Login': Login(),\
                                                   'error': 'Неправильний пароль або логін'})
-    return render(request, 'main/login.html', {'back': request.POST.get('back', ''), 'Login': Login()})
+    return render(request, 'main/signin.html', {'back': request.POST.get('back', ''), 'Login': Login()})
 
 
 def logout(request):
@@ -26,12 +26,11 @@ def create_user(request):
     form = Create_user(request.POST)
     if form.is_valid():
         try:
-            user = User.create(form.cleaned_data['login'],form.cleaned_data['password'],form.cleaned_data['email'],
+            user = User.create(form.cleaned_data['login'], form.cleaned_data['password'],form.cleaned_data['email'],
                                image=form.cleaned_data['image'])
             request.session['name'] = user.name
             return HttpResponseRedirect(request.POST.get('back', ''))
         except ValueError as error:
-            return render(request, 'main/create_user.html', {'back': request.POST.get('back', ''),
-                                                             'create': Create_user(),
-                                                             'error': error})
-    return render(request, 'main/create_user.html', {'back': request.POST.get('back', ''), 'Login': Create_user()})
+            return render(request, 'main/signup.html', {'back': request.POST.get('back', ''),
+                                        'create': Create_user(), 'error': error})
+    return render(request, 'main/signup.html', {'back': request.POST.get('back', ''), 'Login': Create_user()})
