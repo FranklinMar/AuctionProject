@@ -37,7 +37,7 @@ class User:
     __roles = ('admin', 'mod', 'user', 'guest')
 
     def __init__(self, name, password, email, balance=0, role='user',
-                 image='images/users/default.jpg', items=[], chats=[]):
+                 image='images/users/default.png', items=[], chats=[]):
         self.name = name
         self.password = password
         self.email = email

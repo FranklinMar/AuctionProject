@@ -5,47 +5,51 @@
 <!-- Masthead-->
 <header class="masthead" style="--url: url({% static 'main/img/header-bg.jpg' %})">
     <div class="container">
-        <div class="masthead-subheading">Welcome To Our Studio!</div>
-        <div class="masthead-heading text-uppercase">It's Nice To Meet You</div>
-        <a class="btn btn-primary btn-xl text-uppercase" href="#services">Tell Me More</a>
+        <div class="masthead-subheading">Welcome To Our Platform!</div>
+        <div class="masthead-heading text-uppercase">Auction platform</div>
+        <a class="btn btn-primary btn-xl text-uppercase" href="#services">Join straight away</a>
     </div>
 </header>
-<form id="form" class="image" enctype="multipart/form-data" method="POST" action="{{ request.path }}">
+{% comment %}<form id="form" class="image" enctype="multipart/form-data" method="POST" action="{{ request.path }}">
     {% csrf_token %}
     {{ form.file }}
   <button type="submit" id="submit" class="btn btn-dark"><span>UPLOAD</span></button>
-</form>
+</form>{% endcomment %}
 <!-- Services-->
 <section class="page-section" id="services">
     <div class="container">
         <div class="text-center">
-            <h2 class="section-heading text-uppercase">Services</h2>
-            <h3 class="section-subheading text-muted">Lorem ipsum dolor sit amet consectetur.</h3>
+            <h2 class="section-heading text-uppercase">About us</h2>
+            <h3 class="section-subheading text-muted">Our project serves as an auction platform all over the world
+        for NFT and real-life products.</h3>
         </div>
         <div class="row text-center">
             <div class="col-md-4">
                 <span class="fa-stack fa-4x">
                     <i class="fas fa-circle fa-stack-2x text-primary"></i>
-                    <i class="fas fa-shopping-cart fa-stack-1x fa-inverse"></i>
+                    <i class="fas fa-gavel fa-stack-1x fa-inverse"></i>
                 </span>
                 <h4 class="my-3">E-Commerce</h4>
-                <p class="text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Minima maxime quam architecto quo inventore harum ex magni, dicta impedit.</p>
+                <p class="text-muted">Create trade offers and auctions on your items, or join any auction and bet your
+                bid Online.</p>
             </div>
             <div class="col-md-4">
                 <span class="fa-stack fa-4x">
                     <i class="fas fa-circle fa-stack-2x text-primary"></i>
                     <i class="fas fa-laptop fa-stack-1x fa-inverse"></i>
                 </span>
-                <h4 class="my-3">Responsive Design</h4>
-                <p class="text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Minima maxime quam architecto quo inventore harum ex magni, dicta impedit.</p>
+                <h4 class="my-3">Cross-platform</h4>
+                <p class="text-muted">Access our platform and perform trades from any device and OS thanks to REST API
+                    and Django Framework.</p>
             </div>
             <div class="col-md-4">
                 <span class="fa-stack fa-4x">
                     <i class="fas fa-circle fa-stack-2x text-primary"></i>
                     <i class="fas fa-lock fa-stack-1x fa-inverse"></i>
                 </span>
-                <h4 class="my-3">Web Security</h4>
-                <p class="text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Minima maxime quam architecto quo inventore harum ex magni, dicta impedit.</p>
+                <h4 class="my-3">Security</h4>
+                <p class="text-muted">The confidentiality of your data, as well as security of trades and bid policy
+                    guarantees just and safe trading operations.</p>
             </div>
         </div>
     </div>
@@ -54,8 +58,8 @@
 <section class="page-section bg-light" id="portfolio">
     <div class="container">
         <div class="text-center">
-            <h2 class="section-heading text-uppercase">Portfolio</h2>
-            <h3 class="section-subheading text-muted">Lorem ipsum dolor sit amet consectetur.</h3>
+            <h2 class="section-heading text-uppercase">Auctions</h2>
+            <h3 class="section-subheading text-muted">Look at our top of most popular item auctions in real-time.</h3>
         </div>
         <div class="row">
             <div class="col-lg-4 col-sm-6 mb-4">
@@ -152,7 +156,7 @@
     </div>
 </section>
 <!-- About-->
-<section class="page-section" id="about">
+{% comment %}<section class="page-section" id="about">
     <div class="container">
         <div class="text-center">
             <h2 class="section-heading text-uppercase">About</h2>
@@ -212,66 +216,64 @@
             </li>
         </ul>
     </div>
-</section>
+</section>{% endcomment %}
 <!-- Team-->
 <section class="page-section bg-light" id="team">
     <div class="container">
         <div class="text-center">
             <h2 class="section-heading text-uppercase">Our Amazing Team</h2>
-            <h3 class="section-subheading text-muted">Lorem ipsum dolor sit amet consectetur.</h3>
+            <h3 class="section-subheading text-muted">Information Technologies specialists ready to take the world on.</h3>
         </div>
         <div class="row">
             <div class="col-lg-4">
                 <div class="team-member">
-                    <img class="mx-auto rounded-circle" src="{% static 'main/img/team/1.jpg' %}" alt="..." />
-                    <h4>Parveen Anand</h4>
-                    <p class="text-muted">Lead Designer</p>
-                    <a class="btn btn-dark btn-social mx-2" href="#!" aria-label="Parveen Anand Twitter Profile"><i class="fab fa-twitter"></i></a>
-                    <a class="btn btn-dark btn-social mx-2" href="#!" aria-label="Parveen Anand Facebook Profile"><i class="fab fa-facebook-f"></i></a>
-                    <a class="btn btn-dark btn-social mx-2" href="#!" aria-label="Parveen Anand LinkedIn Profile"><i class="fab fa-linkedin-in"></i></a>
+                    <img class="mx-auto rounded-circle" src="{% static 'main/img/team/1.png' %}" alt="..." />
+                    <h4>Oleh Tymchuk</h4>
+                    <p class="text-muted">Mentor/Team lead</p>
+                    <a class="btn btn-dark btn-social mx-2" href="https://t.me/ost_xxx"><i class="fab fa-telegram"></i></a>
+                    <a class="btn btn-dark btn-social mx-2" href="#!"><i class="fab fa-facebook-f"></i></a>
+                    <a class="btn btn-dark btn-social mx-2" href="https://www.linkedin.com/in/oleh-tymchuk-03a27277/"><i class="fab fa-linkedin-in"></i></a>
                 </div>
             </div>
             <div class="col-lg-4">
                 <div class="team-member">
                     <img class="mx-auto rounded-circle" src="{% static 'main/img/team/2.jpg' %}" alt="..." />
-                    <h4>Diana Petersen</h4>
-                    <p class="text-muted">Lead Marketer</p>
-                    <a class="btn btn-dark btn-social mx-2" href="#!" aria-label="Diana Petersen Twitter Profile"><i class="fab fa-twitter"></i></a>
-                    <a class="btn btn-dark btn-social mx-2" href="#!" aria-label="Diana Petersen Facebook Profile"><i class="fab fa-facebook-f"></i></a>
-                    <a class="btn btn-dark btn-social mx-2" href="#!" aria-label="Diana Petersen LinkedIn Profile"><i class="fab fa-linkedin-in"></i></a>
+                    <h4>Denys Berezniuk</h4>
+                    <p class="text-muted">Full-Stack Developer</p>
+                    <a class="btn btn-dark btn-social mx-2" href="https://t.me/DenyaB"><i class="fab fa-telegram"></i></a>
+                    <a class="btn btn-dark btn-social mx-2" href="https://www.facebook.com/denya.bereznyk/"><i class="fab fa-facebook-f"></i></a>
+                    <a class="btn btn-dark btn-social mx-2" href="https://www.linkedin.com/in/denys-berezniuk/"><i class="fab fa-linkedin-in"></i></a>
                 </div>
             </div>
             <div class="col-lg-4">
                 <div class="team-member">
                     <img class="mx-auto rounded-circle" src="{% static 'main/img/team/3.jpg' %}" alt="..." />
-                    <h4>Larry Parker</h4>
-                    <p class="text-muted">Lead Developer</p>
-                    <a class="btn btn-dark btn-social mx-2" href="#!" aria-label="Larry Parker Twitter Profile"><i class="fab fa-twitter"></i></a>
-                    <a class="btn btn-dark btn-social mx-2" href="#!" aria-label="Larry Parker Facebook Profile"><i class="fab fa-facebook-f"></i></a>
-                    <a class="btn btn-dark btn-social mx-2" href="#!" aria-label="Larry Parker LinkedIn Profile"><i class="fab fa-linkedin-in"></i></a>
+                    <h4>Dmytro Demianyk</h4>
+                    <p class="text-muted">Backend Developer</p>
+                    <a class="btn btn-dark btn-social mx-2" href="https://t.me/r1eaktor"><i class="fab fa-telegram"></i></a>
+                    <a class="btn btn-dark btn-social mx-2" href="#!"><i class="fab fa-facebook-f"></i></a>
+                    <a class="btn btn-dark btn-social mx-2" href="#!"><i class="fab fa-linkedin-in"></i></a>
                 </div>
             </div>
         </div>
         <div class="row">
-            <div class="col-lg-8 mx-auto text-center"><p class="large text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aut eaque, laboriosam veritatis, quos non quis ad perspiciatis, totam corporis ea, alias ut unde.</p></div>
+            <div class="col-lg-8 mx-auto text-center"><p class="large text-muted">These are our people.
+                Team of different, proactive IT-specialists sharing one goal by contributing to this project.</p></div>
         </div>
     </div>
 </section>
 <!-- Clients-->
-<div class="py-5">
+<div>
     <div class="container">
         <div class="row align-items-center">
-            <div class="col-md-3 col-sm-6 my-3">
-                <a href="#!"><img class="img-fluid img-brand d-block mx-auto" src="{% static 'main/img/logos/microsoft.svg' %}" alt="..." aria-label="Microsoft Logo" /></a>
+            <div class="col-md-4 col-sm-6 my-3">
+                <a href="https://www.djangoproject.com/"><img class="img-fluid h-100 img-brand d-block mx-auto" src="{% static 'main/img/logos/django.png' %}" alt="..." aria-label="Django Logo" /></a>
             </div>
-            <div class="col-md-3 col-sm-6 my-3">
-                <a href="#!"><img class="img-fluid img-brand d-block mx-auto" src="{% static 'main/img/logos/google.svg' %}" alt="..." aria-label="Google Logo" /></a>
+            <div class="col-md-4 col-sm-6 my-3">
+                <a href="https://www.python.org/"><img class="img-fluid h-100 img-brand d-block mx-auto" src="{% static 'main/img/logos/python.png' %}" alt="..." aria-label="Python Logo" /></a>
             </div>
-            <div class="col-md-3 col-sm-6 my-3">
-                <a href="#!"><img class="img-fluid img-brand d-block mx-auto" src="{% static 'main/img/logos/facebook.svg' %}" alt="..." aria-label="Facebook Logo" /></a>
-            </div>
-            <div class="col-md-3 col-sm-6 my-3">
-                <a href="#!"><img class="img-fluid img-brand d-block mx-auto" src="{% static 'main/img/logos/ibm.svg' %}" alt="..." aria-label="IBM Logo" /></a>
+            <div class="col-md-4 col-sm-6 my-3">
+                <a href="https://www.mongodb.com/"><img class="img-fluid h-100 img-brand d-block mx-auto" src="{% static 'main/img/logos/mongodb.png' %}" alt="..." aria-label="Mongo DB Logo" /></a>
             </div>
         </div>
     </div>
@@ -281,7 +283,8 @@
     <div class="container">
         <div class="text-center">
             <h2 class="section-heading text-uppercase">Contact Us</h2>
-            <h3 class="section-subheading text-muted">Lorem ipsum dolor sit amet consectetur.</h3>
+            <h3 class="section-subheading text-muted">We will keep in touch should you have any questions.<br>
+                (* These fields are required.)</h3>
         </div>
         <!-- * * * * * * * * * * * * * * *-->
         <!-- * * SB Forms Contact Form * *-->
