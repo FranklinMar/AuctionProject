@@ -6,7 +6,7 @@
   {% csrf_token %}
   {{ create_user }}
       <input type="hidden" name="back" value="{{ back }}">
-  <button type="submit" name="enter">увійти</button>
+  <button type="submit" name="enter">створити</button>
 </form>
 <p>{{ error }}</p>
 {% endblock %}

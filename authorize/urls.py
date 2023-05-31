@@ -4,5 +4,5 @@ from authorize.views import login, exit, create_user
 urlpatterns = [
     path('login/', login),
     path('exit/', exit),
-    path('create_user/', create_user),
+    path('create/', create_user),
 ]

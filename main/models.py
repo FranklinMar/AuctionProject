@@ -3,7 +3,6 @@ from functools import partial
 
 from bson import ObjectId
 from AuctionProject.settings import MEDIA_ROOT
-from AuctionProject.settings import MEDIA_ROOT
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db import models
 from pymongo import MongoClient
@@ -18,8 +17,8 @@ from django.core.files.storage import FileSystemStorage
 #from PIL import Image
 import hashlib
 from datetime import datetime
-# from django.utils import timezone
-# from djangotoolbox.fields import ListField
+from django.shortcuts import render as r
+
 CLIENT = MongoClient(settings.DATABASES['default']['CONNECTION'])
 DB = CLIENT[settings.DATABASES['default']['NAME']]
 
@@ -30,11 +29,6 @@ def hash_file(file, block_size=65536):
     for buf in iter(partial(file.read, block_size), b''):
         hasher.update(buf)
     return hasher.hexdigest()
-
-def hash(text):
-    hash = hashlib.sha256()
-    hash.update(text.encode())
-    return str(hash.hexdigest())
 
 class User:
     __collection = DB['User']
@@ -87,7 +81,7 @@ class User:
     def password(self, value):
         if not isinstance(value, str):
             raise TypeError(f"Property type must be 'str', not '{type(value).__name__}'")
-        self.__password = hash(value)
+        self.__password = make_password(value)
         self.update({'$set': {'password': self.__password}})
 
     @property

@@ -9,4 +9,9 @@
   <button type="submit" name="enter">увійти</button>
 </form>
 <p>{{ error }}</p>
+<form method="post" action="auth/create">
+  {% csrf_token %}
+      <input type="hidden" name="back" value="{{ back }}">
+  <button type="submit" name="enter">створити новий акаунт</button>
+</form>
 {% endblock %}
