@@ -14,15 +14,12 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth.hashers import make_password  # , check_password
 from django.contrib.auth.password_validation import validate_password
 from django.core.files.storage import FileSystemStorage
-#from PIL import Image
+from PIL import Image
 import hashlib
 from datetime import datetime
-from django.shortcuts import render as r
 
 CLIENT = MongoClient(settings.DATABASES['default']['CONNECTION'])
 DB = CLIENT[settings.DATABASES['default']['NAME']]
-
-Default_image_url = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFUw3mx3zKkMbGCQriCSpAH-ZUAoxur55odw&usqp=CAU'
 
 def hash_file(file, block_size=65536):
     hasher = hashlib.sha256()
