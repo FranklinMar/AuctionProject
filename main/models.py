@@ -3,7 +3,6 @@ from functools import partial
 
 from bson import ObjectId
 from AuctionProject.settings import MEDIA_ROOT
-from AuctionProject.settings import MEDIA_ROOT
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db import models
 from pymongo import MongoClient
@@ -15,7 +14,7 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth.hashers import make_password  # , check_password
 from django.contrib.auth.password_validation import validate_password
 from django.core.files.storage import FileSystemStorage
-#from PIL import Image
+from PIL import Image
 import hashlib
 from datetime import datetime
 # from django.utils import timezone
@@ -23,7 +22,8 @@ from datetime import datetime
 CLIENT = MongoClient(settings.DATABASES['default']['CONNECTION'])
 DB = CLIENT[settings.DATABASES['default']['NAME']]
 
-Default_image_url = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFUw3mx3zKkMbGCQriCSpAH-ZUAoxur55odw&usqp=CAU'
+# Default_image_url = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFUw3mx3zKkMbGCQriCSpAH-ZUAoxur55odw&usqp=CAU'
+
 
 def hash_file(file, block_size=65536):
     hasher = hashlib.sha256()
@@ -31,10 +31,6 @@ def hash_file(file, block_size=65536):
         hasher.update(buf)
     return hasher.hexdigest()
 
-def hash(text):
-    hash = hashlib.sha256()
-    hash.update(text.encode())
-    return str(hash.hexdigest())
 
 class User:
     __collection = DB['User']
@@ -42,19 +38,25 @@ class User:
     # __chats = DB['Chat']
     __roles = ('admin', 'mod', 'user', 'guest')
 
-    def __init__(self, document):
-        self.__name = document['name']
-        self.__password = document['password']
-        self.__email = document['email']
-        self.__balance = float(document['balance']) if 'balance' in document else 0
-        self.__role = document['role'] if 'role' in document else 'user'
-        self.__image = document['image'] if 'image' in document else Default_image_url
-        self.items = document['items'] if 'items' in document else []
-        self.chats = document['chats'] if 'chats' in document else []
-        self.__id = document['_id']
+    def __init__(self, id, name, password, email, balance=0, role='user',
+                 image='images/users/default.png', items=[], chats=[]):
+        self.__id = id
+        self.__name = name
+        self.__password = password
+        self.__email = email
+        self.__balance = balance
+        self.__role = role
+        self.__image = image
+        self.__items = items
+        self.__chats = chats
 
-    def update(self, set):
-        return self.__collection.update_one({"_id": self.__id}, set)
+    def save(self):
+        dictionary = self.get_vars()  # {key.replace('_User__', ''): self.__dict__[key] for key in self.__dict__}
+        return self.__collection.update_one(filter={"_id": self.__id}, update=dictionary)
+
+    @classmethod
+    def update(cls, user):
+        return cls.__collection.update_one({"_id": user.__id}, user.get_vars())
 
     def delete(self):
         return self.__collection.delete_one(filter={"_id": self.__id})
@@ -68,6 +70,14 @@ class User:
     @property
     def id(self):
         return self.__id
+
+    @id.setter
+    def id(self, value):
+        if not isinstance(value, ObjectId):
+            raise TypeError(f"Property type must be 'ObjectId', not '{type(value).__name__}'")
+        if not self.__collection.find_one({"_id": value}):
+            raise ValidationError(f"Object with Id of {value} not found")
+        self.__id = value
 
     @property
     def name(self):
@@ -87,8 +97,9 @@ class User:
     def password(self, value):
         if not isinstance(value, str):
             raise TypeError(f"Property type must be 'str', not '{type(value).__name__}'")
-        self.__password = hash(value)
-        self.update({'$set': {'password': self.__password}})
+        self.__password = make_password(value)
+        # self.update({'$set': {'password': self.__password}})
+        self.save()
 
     @property
     def email(self):
@@ -100,7 +111,7 @@ class User:
             raise TypeError(f"Property type must be 'str', not '{type(value).__name__}'")
         validate_email(value)
         self.__email = value
-        self.update({'$set': {'email': self.__email}})
+        self.save()
 
     @property
     def balance(self):
@@ -147,7 +158,7 @@ class User:
         else:
             raise TypeError(f"Property type must be 'str' or 'InMemoryUploadedFile', not '{type(value).__name__}'")
         self.__image = filename
-        self.update({'$set': {'image': self.__image}})
+        self.save()
 
     @property
     def items(self):
@@ -198,35 +209,35 @@ class User:
         document = cls.__collection.find_one(filter=filter_)
         if document is None:
             return None
-        return cls(document)
+        return cls(**document)
 
     @classmethod
     def find(cls, filter_):
         return cls.__collection.find(filter=filter_)
 
     @classmethod
-    def create(cls, name, password, email, role='user',image=''):
+    def create(cls, name, password, email, role='user', image=''):
         if len(name) <= 0:
             raise ValueError('name should be written')
         if len(email) <= 0:
             raise ValueError('email should be written')
-        if not (User.find_one({'name': name}) == None):
+        if User.find_one({'name': name}):
             raise ValueError('this name is already exist')
-        if not(User.find_one({'email': email}) == None):
+        if User.find_one({'email': email}):
             raise ValueError('account with this email is already exist')
-        dictionary = {'name':name,'password':password,'email':email,'role':role,'iamge':image}
+        dictionary = {'name': name, 'password': password, 'email': email, 'role': role, 'image': image}
         cls.__collection.insert_one(dictionary)
-        return User.find_one({'name':name})
+        return User.find_one({'name': name})
 
 
 class Auction:
 
     def __init__(self, name, start_bid, bid_user=None, deadline=None):
-        self.name = name
-        self.start_bid = start_bid
+        self.__name = name
+        self.__start_bid = start_bid
         self.__bid = start_bid
-        self.bid_user = bid_user
-        self.deadline = deadline
+        self.__bid_user = bid_user
+        self.__deadline = deadline
         # dictionary = {key.replace('_Auction__', ''): self.__dict__[key] for key in self.__dict__}
         # self.__id = self.__users.insert_one(dictionary).inserted_id
 
@@ -295,20 +306,21 @@ class Auction:
 class Item:
     __collection = DB['Item']
 
-    def __init__(self, name, description, owner, image='images/items/default.jpg', auction=None):
-        self.name = name
-        self.description = description
-        self.owner = owner
-        self.image = image
-        self.auction = auction
+    def __init__(self, id, name, description, owner, image='images/items/default.jpg', auction=None):
+        self.__id = id
+        self.__name = name
+        self.__description = description
+        self.__owner = owner
+        self.__image = image
+        self.__auction = auction
         # print(vars(self))
-        dictionary = self.get_vars()
-        document = self.__collection.find_one(dictionary)
-        if not document:
-            self.__id = self.__collection.insert_one(dictionary).inserted_id
-        else:
-            for key in document:
-                setattr(self, key, document[key])
+        # dictionary = self.get_vars()
+        # document = self.__collection.find_one(dictionary)
+        # if not document:
+        #     self.__id = self.__collection.insert_one(dictionary).inserted_id
+        # else:
+        #     for key in document:
+        #         setattr(self, key, document[key])
 
     def save(self):
         dictionary = self.get_vars()
@@ -325,6 +337,14 @@ class Item:
     @property
     def id(self):
         return self.__id
+
+    @id.setter
+    def id(self, value):
+        if not isinstance(value, ObjectId):
+            raise TypeError(f"Property type must be 'ObjectId', not '{type(value).__name__}'")
+        if not self.__collection.find_one({"_id": value}):
+            raise ValidationError(f"Object with Id of {value} not found")
+        self.__id = value
 
     @property
     def name(self):
@@ -408,11 +428,11 @@ class Item:
 class Chat:
     __collection = DB['Chat']
 
-    def __init__(self, document):
-        self.__user1 = document['user1']
-        self.__user2 = document['user2']
-        self.__messages = document['messages'] if 'messages' in document else []
-        self.__id = document['_id']
+    def __init__(self, id, user1, user2, messages=[]):
+        self.user1 = user1
+        self.user2 = user2
+        self.messages = messages
+        self.id = id
 
     def save(self):
         dictionary = self.get_vars()
@@ -423,6 +443,7 @@ class Chat:
 
     def get_vars(self):
         dictionary = {key.replace('_Chat__', ''): self.__dict__[key] for key in self.__dict__}
+
         dictionary['messages'] = [message.get_vars() for message in self.__messages]
         return dictionary
 
@@ -430,16 +451,24 @@ class Chat:
     def id(self):
         return self.__id
 
+    @id.setter
+    def id(self, value):
+        if not isinstance(value, ObjectId):
+            raise TypeError(f"Property type must be 'ObjectId', not '{type(value).__name__}'")
+        if not self.__collection.find_one({"_id": value}):
+            raise ValidationError(f"Object with Id of {value} not found")
+        self.__id = value
+
     @property
     def user1(self):
-        return User.find_one({'_id':self.__user1})
+        return User.find_one({'_id': self.__user1})
 
     @user1.setter
     def user1(self, value):
         if not isinstance(value, User):
             raise TypeError(f"Property type must be 'User', not '{type(value).__name__}'")
         if value == self.user2:
-            raise ValueError(f"Value of property must be not value of value oter user")
+            raise ValueError(f"Value of property must be not value of value other user")
         self.__user1 = value
 
     @property
@@ -451,7 +480,7 @@ class Chat:
         if not isinstance(value, User):
             raise TypeError(f"Property type must be 'User', not '{type(value).__name__}'")
         if value == self.user1:
-            raise ValueError(f"Value of property must be not value of value oter user")
+            raise ValueError(f"Value of property must be not value of value other user")
         self.__user2 = value
 
     @property
@@ -478,28 +507,30 @@ class Chat:
     @classmethod
     def find_one(cls, filter_):
         document = cls.__collection.find_one(filter=filter_)
-        if document is None:
-            return None
-        return cls(document)
+        if not document:
+            return document
+        return cls(**document)
 
     @classmethod
     def find(cls, filter_):
         return cls.__collection.find(filter=filter_)
 
+
 class Message:
     __collection = DB['Message']
 
-    def __init__(self, text, user, image=None, url=None):
-        self.text = text
-        self.user = user
+    def __init__(self, id, text, user, image=None, url=None):
+        self.__id = id
+        self.__text = text
+        self.__user = user
         self.__time = datetime.utcnow()
-        dictionary = self.get_vars()
-        document = self.__collection.find_one(dictionary)
-        if not document:
-            self.__id = self.__collection.insert_one(dictionary).inserted_id
-        else:
-            for key in document:
-                setattr(self, key, document[key])
+        # dictionary = self.get_vars()
+        # document = self.__collection.find_one(dictionary)
+        # if not document:
+        #     self.__id = self.__collection.insert_one(dictionary).inserted_id
+        # else:
+        #     for key in document:
+        #         setattr(self, key, document[key])
         # self.__id = self.__collection.insert_one(dictionary).inserted_id
 
     def save(self):
@@ -516,6 +547,14 @@ class Message:
     @property
     def id(self):
         return self.__id
+
+    @id.setter
+    def id(self, value):
+        if not isinstance(value, ObjectId):
+            raise TypeError(f"Property type must be 'ObjectId', not '{type(value).__name__}'")
+        if not self.__collection.find_one({"_id": value}):
+            raise ValidationError(f"Object with Id of {value} not found")
+        self.__id = value
 
     @property
     def text(self):
