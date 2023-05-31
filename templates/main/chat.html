@@ -4,4 +4,17 @@
 {% block body %}
 <img src="{{user2.image}}" width="100" height="100">
 <h>Користувач {{user2.name}}</h>
+{% for message in chat.messages %}
+<div style="background-color:yellow">
+    <h1>{{message.user_name}}</h1>
+    <p>{{message.text}}</p>
+    </br>
+    <p>{{message.time}}</p>
+</div>
+{% endfor %}
+<form method="post" action="{{request.path}}">
+  {% csrf_token %}
+  <input type="text" name="text">
+  <button type="submit" name="send">надіслати</button>
+</form>
 {% endblock %}
