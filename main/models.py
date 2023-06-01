@@ -333,7 +333,7 @@ class Item:
     def get_vars(self):
         dictionary = {key.replace('_Item__', ''): self.__dict__[key] for key in self.__dict__}
         dictionary['auction'] = self.auction.get_vars() if self.auction else self.auction
-        dictionary['owner'] = self.owner.id
+        dictionary['owner'] = self.owner
         dictionary.pop('id')
         return dictionary
 
@@ -382,7 +382,7 @@ class Item:
         self.__owner = value
 
     def owner_user(self):
-        return User.find_one({"_id": self.owner})
+        return User.find_one({'_id': ObjectId(self.__owner)})
 
     @property
     def image(self):

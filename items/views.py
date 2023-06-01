@@ -24,10 +24,10 @@ def add(request):
     if 'name' in request.session:
         if request.method == 'POST':
             form = Item_form(request.POST)
-            if form.is_valid:
+            if form.is_valid():
                 item = Item.create(form.cleaned_data['name'],form.cleaned_data['description'],\
                                    User.find_one({'name':request.session['name']}).id,\
                                    form.cleaned_data['image'])
-                HttpResponseRedirect('/item/'+item.id+"/")
+                return HttpResponseRedirect('/item/'+str(item.id)+"/")
         return render(request, "main/add_item.html", {"item": Item_form()})
     return HttpResponseRedirect('/item/')
