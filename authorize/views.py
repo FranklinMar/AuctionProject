@@ -5,7 +5,6 @@ from authorize.models import *
 from django.views.decorators.cache import never_cache
 from django.http import HttpResponseRedirect
 
-
 @never_cache
 def login(request):
     if request.method == 'POST':
@@ -20,10 +19,10 @@ def login(request):
                                                       'error': 'Неправильний пароль або логін'})
     return render(request, 'main/signin.html', {'back': request.POST.get('back', ''), 'form': Login()})
 
-
 def logout(request):
     request.session.pop('name')
-    return HttpResponseRedirect(request.POST.get('back', ''))
+    request.session.pop('image')
+    return HttpResponseRedirect('/')
 
 
 @never_cache

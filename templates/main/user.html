@@ -9,5 +9,7 @@
 </div>
 {% if is_own %}
 <button onclick="location.href='/user/{{user.name}}/settings/'">Налаштування</button>
+{% else%}
+<button onclick="location.href='/chat/{{user.name}}/'">чат</button>
     {% endif %}
 {% endblock %}

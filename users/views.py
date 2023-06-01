@@ -26,6 +26,7 @@ def settings(request, id: str):
             form = Change_image(request.POST, request.FILES)
             if form.is_valid():
                 user.image = form.cleaned_data['image']
+                request.session['image'] = user.image
         return render(request, 'main/user_settings.html', {'user':user,\
                                                            'email_form':Change_email(initial={'email':user.email}),\
                                                            'password_form':Change_password(),\
