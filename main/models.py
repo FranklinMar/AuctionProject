@@ -21,11 +21,13 @@ from datetime import datetime
 CLIENT = MongoClient(settings.DATABASES['default']['CONNECTION'])
 DB = CLIENT[settings.DATABASES['default']['NAME']]
 
+
 def hash_file(file, block_size=65536):
     hasher = hashlib.sha256()
     for buf in iter(partial(file.read, block_size), b''):
         hasher.update(buf)
     return hasher.hexdigest()
+
 
 class User:
     __collection = DB['User']
@@ -96,7 +98,8 @@ class User:
         if not isinstance(value, str):
             raise TypeError(f"Property type must be 'str', not '{type(value).__name__}'")
         self.__password = make_password(value)
-        self.update({'$set': {'password': self.__password}})
+        # self.update({'$set': {'password': self.__password}})
+        self.save()
 
     @property
     def email(self):
@@ -214,19 +217,16 @@ class User:
         return cls.__collection.find(filter=filter_)
 
     @classmethod
-    def create(cls, name, password, email, role='user',image=''):
-        if len(name) <= 0:
-            raise ValueError('name should be written')
-        if len(email) <= 0:
-            raise ValueError('email should be written')
-        if not (User.find_one({'name': name}) == None):
-            raise ValueError('this name is already exist')
-        if not(User.find_one({'email': email}) == None):
-            raise ValueError('account with this email is already exist')
-        validate_email(email)
-        dictionary = {'name':name,'password':make_password(password),'email':email,'role':role,'iamge':image}
-        cls.__collection.insert_one(dictionary)
-        return User.find_one({'name':name})
+    def create(cls, name, password, email, balance=0, role='user', image='images/users/default.png',
+               items=[], chats=[]):
+        # if User.find_one({'name': name}):
+        #     raise ValidationError('This name is already exists')
+        # if User.find_one({'email': email}):
+        #     raise ValidationError('Account with this email is already exists')
+        user = cls(None, name, password, email, balance, role, image, items, chats)
+        user.id = cls.__collection.insert_one(user.get_vars()).inserted_id
+        return user
+
 
 class Auction:
 
@@ -445,12 +445,11 @@ class Item:
 class Chat:
     __collection = DB['Chat']
 
-    def __init__(self, document):
-        self.__user1 = User.find_one({'_id':ObjectId(document['user1'])})
-        self.__user2 = User.find_one({'_id':ObjectId(document['user2'])})
-        self.__messages = document['messages'] if 'messages' in document else []
-        self.__messages = [Message.find_one({'_id':ObjectId(id)}) for id in self.__messages]
-        self.__id = document['_id']
+    def __init__(self, _id, user1, user2, messages=[]):
+        self.user1 = user1
+        self.user2 = user2
+        self.messages = messages
+        self.id = _id
 
     def save(self):
         dictionary = self.get_vars()
@@ -483,7 +482,7 @@ class Chat:
 
     @property
     def user1(self):
-        return self.__user1
+        return User.find_one({'_id': self.__user1})
 
     @user1.setter
     def user1(self, value):
@@ -495,7 +494,7 @@ class Chat:
 
     @property
     def user2(self):
-        return self.__user2
+        return User.find_one({'_id': self.__user2})
 
     @user2.setter
     def user2(self, value):
@@ -513,8 +512,8 @@ class Chat:
     def messages(self, value):
         if not isinstance(value, list):
             raise TypeError(f"Property type must be a list of 'ObjectId', not '{type(value).__name__}'")
-        if not all(isinstance(item, Message) for item in value):
-            raise TypeError(f"Property type inside list must be 'Message'")
+        if not all(isinstance(item, ObjectId) for item in value):
+            raise TypeError(f"Property type inside list must be 'ObjectId'")
         if len(value) != len(list(DB['Message'].find({"id", {"$in": value}}))):
             raise ValidationError(f"Not all messages found")
         self.__messages = value
@@ -535,41 +534,31 @@ class Chat:
         return cls(**document)
 
     @classmethod
-    def find_one_by_users(cls, user1, user2):
-        users = [ObjectId(user1.id),ObjectId(user2.id)]
-        document = cls.__collection.find_one({'$and': [{'user1':{'$in':users}} ,{'user2':{'$in':users}}]})
-        if document is None:
-            return None
-        return cls(document)
-
-    @classmethod
     def find(cls, filter_):
         return cls.__collection.find(filter=filter_)
 
     @classmethod
-    def create(cls, user1, user2):
-        dictionary = {'user1': ObjectId(user1.id),'user2': ObjectId(user2.id)}
-        cls.__collection.insert_one(dictionary)
-        return Chat.find_one_by_users(user1,user2)
-
-    def send(self, message):
-        self.__messages.append(message)
-        self.update({'$push': {'messages': message.id}})
-
-    def update(self, set):
-        return self.__collection.update_one({"_id": self.__id}, set)
+    def create(cls, user1, user2, messages=[]):
+        chat = cls(None, user1, user2, messages)
+        chat.id = chat.__collection.insert_one(chat.get_vars()).inserted_id
 
 
 class Message:
     __collection = DB['Message']
 
-    def __init__(self, document):
-        self.__user = User.find_one({'_id':ObjectId(document['user'])})
-        self.__time = document['time']
-        self.__text = document['text']
-        self.__url = document['url']
-        self.__image = document['image']
-        self.__id = document['_id']
+    def __init__(self, _id, text, user, image=None, url=None):
+        self.__id = _id
+        self.__text = text
+        self.__user = user
+        self.__time = datetime.utcnow()
+        # dictionary = self.get_vars()
+        # document = self.__collection.find_one(dictionary)
+        # if not document:
+        #     self.__id = self.__collection.insert_one(dictionary).inserted_id
+        # else:
+        #     for key in document:
+        #         setattr(self, key, document[key])
+        # self.__id = self.__collection.insert_one(dictionary).inserted_id
 
     def save(self):
         dictionary = self.get_vars()
@@ -615,8 +604,10 @@ class Message:
 
     @user.setter
     def user(self, value):
-        if not isinstance(value, User):
-            raise TypeError(f"Property type must be 'User', not '{type(value).__name__}'")
+        if not isinstance(value, ObjectId):
+            raise TypeError(f"Property type must be 'ObjectId', not '{type(value).__name__}'")
+        if not DB['User'].find_one(value):
+            raise ValidationError(f"User with id of '{value.__id}' not found")
         self.__user = value
 
     @property
@@ -633,26 +624,26 @@ class Message:
 
     @classmethod
     def all(cls):
-        return [cls(document) for document in cls.__collection.find()]
+        return [cls(**document) for document in cls.__collection.find()]
 
     @classmethod
-    def find_one(cls, filter_):
-        return cls(cls.__collection.find_one(filter=filter_))
+    def find_one(cls, filter_=None):
+        document = cls.__collection.find_one(filter=filter_)
+        if not document:
+            return document
+        document['id'] = document.pop('_id')
+        return cls(**document)
 
     @classmethod
     def find(cls, filter_):
         return cls.__collection.find(filter=filter_)
 
     @classmethod
-    def create(cls, user,text, url='', image=''):
-        if len(text) == 0:
-            raise ValueError('text should be written')
-        if not isinstance(user,User):
-            raise TypeError(f"Property type must be 'User', not '{type(user).__name__}'")
-        dictionary = {'user': ObjectId(user.id), 'text': text, 'url': url, 'image': image,
-                      'time' : str(datetime.utcnow())}
-        cls.__collection.insert_one(dictionary)
-        return Message.find_one({'time': dictionary['time']})
+    def create(cls, text, user, image=None, url=None):
+        message = cls(None, text, user, image, url)
+        message.id = cls.__collection.insert_one(message.get_vars())
+        return message
+
 
 # def min_value_allowed(value):
 #     if value >= 0:
