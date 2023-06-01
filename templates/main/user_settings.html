@@ -21,7 +21,7 @@
   {{ password_form }}
   <button type="submit" name="change_password">створити новий пароль</button>
 </form>
-<form method="post" action="/auth/exit/" style=" display: inline-block">
+<form method="post" action="/auth/logout/" style=" display: inline-block">
     {% csrf_token %}
   <button type="submit" name="exit">вийти</button>
 </form>

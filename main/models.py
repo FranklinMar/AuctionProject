@@ -50,7 +50,7 @@ class User:
     def save(self):
         # dictionary = self.get_vars()  # {key.replace('_User__', ''): self.__dict__[key] for key in self.__dict__}
         # dictionary.pop('id')
-        return self.__collection.update_one(filter={"_id": self.__id}, update=self.get_vars())
+        return self.__collection.update_one(filter={"_id": self.__id}, update={'$set':self.get_vars()})
 
     @classmethod
     def update(cls, obj):
@@ -98,7 +98,6 @@ class User:
         if not isinstance(value, str):
             raise TypeError(f"Property type must be 'str', not '{type(value).__name__}'")
         self.__password = make_password(value)
-        # self.update({'$set': {'password': self.__password}})
         self.save()
 
     @property
@@ -209,7 +208,7 @@ class User:
         document = cls.__collection.find_one(filter=filter_)
         if document is None:
             return None
-        document['id'] = document.pop('_id')
+        document['_id'] = document.pop('_id')
         return cls(**document)
 
     @classmethod
@@ -219,11 +218,11 @@ class User:
     @classmethod
     def create(cls, name, password, email, balance=0, role='user', image='images/users/default.png',
                items=[], chats=[]):
-        # if User.find_one({'name': name}):
-        #     raise ValidationError('This name is already exists')
-        # if User.find_one({'email': email}):
-        #     raise ValidationError('Account with this email is already exists')
-        user = cls(None, name, password, email, balance, role, image, items, chats)
+        if not(User.find_one({'name':name}) is None):
+            raise ValueError("акаунт з цим ім'ям вже існує")
+        if not(User.find_one({'email':email}) is None):
+            raise ValueError("акаунт з цим емейлом вже існує")
+        user = cls(None, name, make_password(password), email, balance, role, image, items, chats)
         user.id = cls.__collection.insert_one(user.get_vars()).inserted_id
         return user
 
@@ -530,7 +529,7 @@ class Chat:
         document = cls.__collection.find_one(filter=filter_)
         if not document:
             return document
-        document['id'] = document.pop('_id')
+        document['_id'] = document.pop('_id')
         return cls(**document)
 
     @classmethod
