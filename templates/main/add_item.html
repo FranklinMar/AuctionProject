@@ -2,9 +2,51 @@
 {% load static %}
 
 {% block body %}
-<form method="post" action="{{request.path}}" style=" display: inline-block">
-    {% csrf_token %}
-    {{ item }}
-  <button type="submit" name="add">створити</button>
-</form>
+
+<section class="page-section bg-dark" id="item">
+    <section class="py-5">
+        <form method="post" action="{{request.path}}" class="container px-4 px-lg-5 my-5">
+            <div class="row gx-4 gx-lg-5 align-items-center">
+                <div class="text-center">
+                    <h2 class="section-heading text-uppercase text-white">Create Item</h2>
+                </div>
+                <div class="col-md-6">
+                    <img id="image" class="border border-dark rounded-3 card-img-top mb-3" src="/media/images/items/default.jpg" alt="..." />
+                    {% csrf_token %}
+                    {{ item.image }}
+                </div>
+                <div class="col-md-6">
+                     {% csrf_token %}
+                     {{ item.name }}
+                    <div class="fs-5 mb-5">
+    {#                    <span class="text-decoration-line-through">$45.00</span>#}
+    {#                    <span>$40.00</span>#}
+{#                     <p class="lead">#}
+
+                        {% csrf_token %}
+                        {{ item.description }}
+{#                     </p>#}
+                        <div class="d-flex">
+                              <button type="submit" class="btn btn-outline-success" name="add">Create</button>
+        {#                    <input class="form-control text-center me-3" id="inputQuantity" type="num" value="1" style="max-width: 3rem" />#}
+                             {% comment %}{% if item.auction %}
+                            <a href="#">
+                                <button class="btn btn-warning flex-shrink-0" type="button">
+                                    <i class="bi-cart-fill me-1"></i>
+                                    Join auction
+                                </button>
+                            </a>
+                             {% endif %}{% endcomment %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </section>
+</section>
+<script src="{% static '/main/js/imaging.js' %}">
+</script>
+<script>
+loadURLToInputFiled('/media/images/items/default.jpg', 'default.jpg')
+</script>
 {% endblock %}
