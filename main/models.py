@@ -427,7 +427,7 @@ class Item:
         document = cls.__collection.find_one(filter=filter_)
         if not document:
             return document
-        document['id'] = document.pop('_id')
+        document['_id'] = document.pop('_id')
         return cls(**document)
 
     @classmethod

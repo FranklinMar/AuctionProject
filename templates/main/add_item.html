@@ -1,0 +1,10 @@
+{% extends 'main/layouts/layout.html' %}
+{% load static %}
+
+{% block body %}
+<form method="post" action="{{request.path}}" style=" display: inline-block">
+    {% csrf_token %}
+    {{ item }}
+  <button type="submit" name="add">створити</button>
+</form>
+{% endblock %}
