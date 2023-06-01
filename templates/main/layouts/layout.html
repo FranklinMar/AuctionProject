@@ -28,12 +28,6 @@
         <!-- Navigation-->
         <nav class="navbar navbar-expand-lg navbar-dark fixed-top n" id="mainNav" style="position:inherit">
             <div class="container">
-                <div>
-                                    {% if 'name' in request.session %}
-                 {{ request.session.name }}
-               <img src="{{ request.session.image }}" height="30" width="30" style=" display: inline-block">
-                {% endif %}
-                                </div>
                 <a class="navbar-brand px-3 bg-light br rounded" href="{% url 'Home' %}#page-top"><img src="{% static 'main/img/logo.png'%}" alt="..." /></a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
                     Menu
@@ -45,18 +39,23 @@
                         <li class="nav-item"><a class="nav-link" href="{% url 'Home' %}#AboutUs">About Us</a></li>
 {#                        <li class="nav-item"><a class="nav-link" href="#team">Team</a></li>#}
 {#                        <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>#}
-                            <li class="nav-item">
-                         <form method="POST" action="{% url 'Login' %}">
+                        {% if 'name' in request.session %}
+                            <li class="nav-item btn btn-dark">{{ request.session.name }}</li>
+                            <li class="nav-item"><img src="/media/{{ request.session.image }}" alt="..." style="object-fit: cover; height: 30px; width: 30px"></li>
+                        {% else %}
+                        <li class="nav-item"><a class="nav-link" href="{% url 'Login' %}">Sign in</a>
+                         {% comment %}<form method="POST" action="{% url 'Login' %} ">
                             <input type="hidden" name="back" value="{{ request.path }}">
                         <button class="nav-link  btn btn-warning" type="submit">Sign In</button>
-                    </form>
-                    </li>
-                        <li class="nav-item">
-                             <form method="POST" action="{% url 'Register' %}">
+                        </form>{% endcomment %}
+                        </li>
+                        <li class="nav-item"><a class="nav-link btn-warning btn" href="{% url 'SignUp' %}">Sign Up</a>
+                             {% comment %}<form method="POST" action="{% url 'Register' %}">
                             <input type="hidden" name="back" value="{{ request.path }}">
                             <button class="nav-link btn btn-warning" type="submit">Sign Up</button>
-                        </form>
+                            </form>{% endcomment %}
                         </li>
+                        {% endif %}
                   </ul>
               </div>
             </div>

@@ -7,7 +7,7 @@
     <div class="container">
         <div class="masthead-subheading">Welcome To Our Platform!</div>
         <div class="masthead-heading text-uppercase">Auction platform</div>
-        <a class="btn btn-primary btn-xl text-uppercase" href="#services">Join straight away</a>
+        <a class="btn btn-primary btn-xl text-uppercase" href="{% url 'Login' %}">Join straight away</a>
     </div>
 </header>
 {% comment %}<form id="form" class="image" enctype="multipart/form-data" method="POST" action="{{ request.path }}">
@@ -364,7 +364,7 @@
 <!-- item item 1 modal popup-->
 
 {% for item in items %}
-<div class="item-modal modal fade" id="itemModal1" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="item-modal modal fade" id="itemModal{{ forloop.counter }}" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="close-modal" data-bs-dismiss="modal"><img src="{% static 'main/img/close-icon.svg' %}" alt="Close modal" /></div>
@@ -376,6 +376,11 @@
                             <h2 class="text-uppercase">{{ item.name }}</h2>
 {#                            <p class="item-intro text-muted">Lorem ipsum dolor sit amet consectetur.</p>#}
                             <img class="img-fluid d-block mx-auto" src="/media/{{ item.image }}" alt="..." />
+                            <div class="fs-5 mb-5">
+            {#                    <span class="text-decoration-line-through">$45.00</span>#}
+            {#                    <span>$40.00</span>#}
+                                 <span>Owner - <a href="{% url 'Profile' item.owner_user.name %}">{{ item.owner_user.name }}</a></span>
+                            </div>
                             <p>{{ item.description|linebreaks }}</p>
 {#                            <ul class="list-inline">#}
 {#                                <li>#}

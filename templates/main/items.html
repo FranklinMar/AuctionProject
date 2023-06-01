@@ -8,12 +8,15 @@
             <h2 class="section-heading text-uppercase text-white">Items</h2>
             <h3 class="section-subheading text-muted">Look at online active auctions in real time.</h3>
         </div>
+        {% if 'name' in request.session %}
+            <a href="{% url 'Item_create' %}" class="mb-5 btn btn-dark btn-outline-primary w-100">Додати товар</a>
+        {% endif %}
 {#        <a class="w-100 btn btn-success mb-5" href="#">Create New Recipe</a>#}
         <div class="row">
             {% for item in items %}
             <div class="col-lg-4 col-sm-6 mb-4 ">
                 <div class="item-item stretch flex-column">
-                    <a href="{% url 'Item' item.id %}" class="item-link" data-bs-toggle="modal" {% comment %}href="#recipeModal{{ forloop.counter }}"{% endcomment %}>
+                    <a href="{% url 'Item' item.id %}" class="item-link" {% comment %}href="#recipeModal{{ forloop.counter }}"{% endcomment %}>
                         <div class="item-hover">
                             <div class="item-hover-content"><h4>More</h4></div>
                         </div>
@@ -27,7 +30,6 @@
             </div>
         {% endfor %}
         </div>
-        <a href="{% url 'Item_create' %}" class="navbar-brand px-3 bg-light br rounded">Додати товар</a>
     </div>
 </section>
 {% endblock %}
