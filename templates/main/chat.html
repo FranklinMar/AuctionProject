@@ -1,4 +1,4 @@
-{% extends 'main/layout.html' %}
+{% extends 'main/layouts/layout.html' %}
 {% load static %}
 
 {% block body %}
@@ -6,10 +6,8 @@
 <h>Користувач {{user2.name}}</h>
 {% for message in chat.messages %}
 <div style="background-color:yellow">
-    <h1>{{message.user.name}}</h1>
-    <p>{{message.text}}</p>
-    </br>
-    <p>{{message.time}}</p>
+    <p style="margin-bottom:0em">{{message.text}}</p>
+    <p style="font-size:7px">{{message.time}}</p>
 </div>
 {% endfor %}
 <form method="post" action="{{request.path}}">
