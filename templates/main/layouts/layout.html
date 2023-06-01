@@ -26,25 +26,14 @@
     </head>
     <body id="page-top">
         <!-- Navigation-->
-        <nav class="navbar navbar-expand-lg navbar-dark fixed-top n" id="mainNav">
+        <nav class="navbar navbar-expand-lg navbar-dark fixed-top n" id="mainNav" style="position:inherit">
             <div class="container">
-                {% comment %}{% if 'name' in request.session %}
                 <div>
-                 {{user.name}}
-                <form method="post" action="/auth/exit/" style=" display: inline-block">
-                    {% csrf_token %}
-                  <input type="hidden" name="back" value="{{ request.path }}">
-                  <button type="submit" name="exit">вийти</button>
-                </form>
-               <img src="{{user.image}}" height="30" width="30" style=" display: inline-block">
-                {% else %}
-                <form method="post" action="/auth/login/" style=" display: inline-block">
-                    {% csrf_token %}
-                  <input type="hidden" name="back" value="{{ request.path }}">
-                  <button type="submit" name="login">вхід</button>
-                </form>
-                    </div>
-                {% endif %}{% endcomment %}
+                                    {% if 'name' in request.session %}
+                 {{ request.session.name }}
+               <img src="{{ request.session.image }}" height="30" width="30" style=" display: inline-block">
+                {% endif %}
+                                </div>
                 <a class="navbar-brand px-3 bg-light br rounded" href="{% url 'Home' %}#page-top"><img src="{% static 'main/img/logo.png'%}" alt="..." /></a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
                     Menu
@@ -56,8 +45,18 @@
                         <li class="nav-item"><a class="nav-link" href="{% url 'Home' %}#AboutUs">About Us</a></li>
 {#                        <li class="nav-item"><a class="nav-link" href="#team">Team</a></li>#}
 {#                        <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>#}
-                        <li class="nav-item"><a class="nav-link" href="{% url 'Login' %}">Sign In</a></li>
-                        <li class="nav-item"><a class="nav-link btn btn-warning" href="{% url 'Register' %}">Sign Up</a></li>
+                            <li class="nav-item">
+                         <form method="POST" action="{% url 'Login' %}">
+                            <input type="hidden" name="back" value="{{ request.path }}">
+                        <button class="nav-link  btn btn-warning" type="submit">Sign In</button>
+                    </form>
+                    </li>
+                        <li class="nav-item">
+                             <form method="POST" action="{% url 'Register' %}">
+                            <input type="hidden" name="back" value="{{ request.path }}">
+                            <button class="nav-link btn btn-warning" type="submit">Sign Up</button>
+                        </form>
+                        </li>
                   </ul>
               </div>
             </div>
