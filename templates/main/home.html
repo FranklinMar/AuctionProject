@@ -7,7 +7,7 @@
     <div class="container">
         <div class="masthead-subheading">Welcome To Our Platform!</div>
         <div class="masthead-heading text-uppercase">Auction platform</div>
-        {% if 'name' in request.session %}
+        {% if not 'name' in request.session %}
             <a class="btn btn-primary btn-xl text-uppercase" href="{% url 'Login' %}">Join straight away</a>
         {% else %}
             <a class="btn btn-primary btn-xl text-uppercase" href="{% url 'Items' %}">Join straight away</a>

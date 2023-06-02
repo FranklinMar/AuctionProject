@@ -45,7 +45,7 @@
 {#                        <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>#}
                         {% if 'name' in request.session %}
                             <li class="nav-item">
-                                <a class="nav-link">{{ request.session.name }}</a>
+                                <a class="nav-link" href="{% url 'Profile' request.session.name %}">{{ request.session.name }}</a>
                             </li>
                             <li class="nav-item">
                                 <div class="dropdown">

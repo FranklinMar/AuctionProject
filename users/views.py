@@ -9,7 +9,7 @@ def user_id(request, id: str):
     user = User.find_one({"name": id})
     if user is None:
         return HttpResponse("<h1>Error<h1>")
-    return render(request, 'main/user.html', {'user':user
+    return render(request, 'main/user.html', {'user': user
         ,'is_own': 'name' in request.session and request.session['name'] == user.name})
 
 
@@ -27,8 +27,8 @@ def settings(request, id: str):
             if form.is_valid():
                 user.image = form.cleaned_data['image']
                 request.session['image'] = user.image
-        return render(request, 'main/user_settings.html', {'user':user,\
-                                                           'email_form':Change_email(initial={'email':user.email}),\
-                                                           'password_form':Change_password(),\
-                                                           'image_form':Change_image()})
+        return render(request, 'main/user_settings.html', {'user': user,\
+                                                           'email_form': Change_email(initial={'email':user.email}),\
+                                                           'password_form': Change_password(),\
+                                                           'image_form': Change_image()})
     return HttpResponse("<h1>Error<h1>")

@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from main.models import User
 from django.contrib.auth.hashers import make_password, check_password
 from authorize.models import *
@@ -8,8 +8,8 @@ from django.http import HttpResponseRedirect
 
 @never_cache
 def login(request):
-    if request.session['name']:
-        return HttpResponseRedirect('/')
+    if 'name' in request.session:
+        return redirect('Home')
     if request.method == 'POST':
         form = Login(request.POST)
         if form.is_valid():
@@ -31,13 +31,13 @@ def login(request):
 def logout(request):
     request.session.pop('name')
     request.session.pop('image')
-    return HttpResponseRedirect('/')
+    return redirect('Home')
 
 
 @never_cache
 def create_user(request):
-    if request.session['name']:
-        return HttpResponseRedirect('/')
+    if 'name' in request.session:
+        return redirect('Home')
     # print(1)
     print(request.POST.get('back', ''))
     if request.method == 'POST':
