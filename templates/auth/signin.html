@@ -24,15 +24,16 @@
                     <label for="{{ field.auto_id }}" class="form-label bg-transparent">{{ field.label }}</label>
                 </div>
             {% endfor %}
-      <input type="hidden" name="back" value="{{ back }}">
+            <div id="error" class="text-danger mb-1">{{ error }}</div>
+            <input type="hidden" name="back" value="{{ back }}">
             <button type="submit" class="w-75 mb-4 btn btn-warning text-white btn-xl text-uppercase">Sign In</button>
         </form>
-                <p style="color:white">{{ error }}</p>
-                    <form method="post" action="{% url 'Register' %}">
-  {% csrf_token %}
-      <input type="hidden" name="back" value="{{ back }}">
-  <a class="link-light mb-1" href="#recipe">Don't have an account?</a>
-</form>
+{#                <p style="color:white">{{ error }}</p>#}
+{#                    <form method="post" action="{% url 'Register' %}">#}
+{#  {% csrf_token %}#}
+{#      <input type="hidden" name="back" value="{{ back }}">#}
+{#  <a class="link-light mb-1" href="#recipe">Don't have an account?</a>#}
+{#</form>#}
     </div>
 </header>
 {% endblock %}

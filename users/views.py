@@ -8,7 +8,8 @@ from django.views.decorators.csrf import csrf_protect
 def user_profile(request, id: str):
     user = User.find_one({"name": id})
     if user is None:
-        return HttpResponse("<h1>Error<h1>")
+        return render(request, 'main/error.html')
+        # return HttpResponse("<h1>Error<h1>")
     return render(request, 'user/user.html', {'user': user
         ,'is_own': 'name' in request.session and request.session['name'] == user.name})
 
@@ -31,4 +32,4 @@ def user_settings(request, id: str):
                                                            'email_form': ChangeEmail(initial={'email': user.email}),
                                                            'password_form': ChangePassword(),
                                                            'image_form': ChangeImage()})
-    return HttpResponse("<h1>Error<h1>")
+    return render(request, 'main/error.html')

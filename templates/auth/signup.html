@@ -34,14 +34,14 @@
                     <label for="{{ field.auto_id }}" class="form-label bg-transparent">{{ field.label }}</label>
                 </div>
             {% endfor %}
-                        <input type="hidden" name="back" value="{{ back }}">
+            <input id="error" type="hidden" name="back" value="{{ back }}">
             <div class="text-success mb-1">&NonBreakingSpace;</div>
         <button id="submit" type="submit" class="w-75 mb-4 btn btn-warning text-white btn-xl text-uppercase" disabled>Sign Up</button>
     </form>
-        <form method="POST" action="{% url 'Login' %}">
-                         <input type="hidden" name="back" value="{{ back }}">
-                <a href="{% url 'Login' %}" class="link-light mb-1">Already signed up?</a>
-</form>
+{#        <form method="POST" action="{% url 'Login' %}">#}
+{#                         <input type="hidden" name="back" value="{{ back }}">#}
+{#                <a href="{% url 'Login' %}" class="link-light mb-1">Already signed up?</a>#}
+{#</form>#}
   </div>
 </header>
 <script >

@@ -16,15 +16,16 @@ def login(request):
             user = User.find_one({'name': form.cleaned_data['login']})
             if user is None:
                 return render(request, 'auth/signin.html', {'back': request.POST.get('back', ''), 'form': Login(),
-                                                            'error': 'Неправильний логін'})
+                                                            'error': 'Invalid username or password'})
             if not(check_password(form.cleaned_data['password'], user.password)):
                 return render(request, 'auth/signin.html', {'back': request.POST.get('back', ''), 'form': Login(),
-                                                            'error': 'Неправильний пароль'})
+                                                            'error': 'Invalid password'})
             request.session['name'] = user.name
             request.session['image'] = user.image
             print(2)
             print(request.POST.get('back', ''))
-            return redirect(request.POST.get('back', ''))
+            # return redirect(request.POST.get('back', ''))
+            return redirect('Home')
     return render(request, 'auth/signin.html', {'back': request.POST.get('back', ''), 'form': Login()})
 
 

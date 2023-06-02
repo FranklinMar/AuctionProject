@@ -24,3 +24,8 @@ def home(request):
     # print(type(user["_id"]))
     # return HttpResponse(f"<h1>Hello world<h1>{user['name']}")
     return render(request, 'main/home.html', {"items": Item.all()})  # {"form": form}
+
+
+@never_cache
+def error(request):
+    return render(request, 'main/error.html')

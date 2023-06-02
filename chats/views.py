@@ -16,4 +16,5 @@ def chat_id(request, id: str):
         print(chat.messages)
         return render(request, 'main/chat.html', {'chat': chat, 'user2': chat.user1
             if chat.user2.name == request.session['name'] else chat.user2})
-    return HttpResponse("<h1>Error<h1>")
+    return render(request, 'main/error.html')
+    # return HttpResponse("<h1>Error<h1>")
