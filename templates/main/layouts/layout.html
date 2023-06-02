@@ -39,32 +39,33 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarResponsive">
                     <ul class="navbar-nav text-uppercase ms-auto py-4 py-lg-0">
-                        <li class="nav-item"><a class="nav-link" href="{% url 'Items' %}">Items</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'Home' %}#AboutUs">About Us</a></li>
+                        <li class="nav-item justify-content-center align-self-center"><a class="nav-link" href="{% url 'Items' %}">Items</a></li>
+                        <li class="nav-item justify-content-center align-self-center"><a class="nav-link" href="{% url 'Home' %}#AboutUs">About Us</a></li>
 {#                        <li class="nav-item"><a class="nav-link" href="#team">Team</a></li>#}
 {#                        <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>#}
                         {% if 'name' in request.session %}
-                            <li class="nav-item">
+                            <li class="nav-item justify-content-center align-self-center">
                                 <a class="nav-link" href="{% url 'Profile' request.session.name %}">{{ request.session.name }}</a>
                             </li>
-                            <li class="nav-item">
+                            <li class="nav-item justify-content-center align-self-center">
                                 <div class="dropdown">
-                                    <button class="bg-transparent border-0" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <img src="/media/{{ request.session.image }}" alt="..." style="object-fit: cover; height: 30px; width: 30px" class="rounded-5">
+                                    <button class="bg-transparent border-0" type="button" id="dropdownMenuButton" data-toggle="dropdown" data-bs-display="static" aria-haspopup="true" aria-expanded="false">
+                                    <img src="/media/{{ request.session.image }}" alt="..." style="object-fit: cover; height: 50px; width: 50px" class="rounded-5 border border-warning border-2">
                                     </button>
-                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    <div class="dropdown-menu dropdown-menu-dark dropdown-menu-lg-end" aria-labelledby="dropdownMenuButton">
+                                        <a class="dropdown-item" href="{% url 'Settings' request.session.name %}">Settings</a>
                                         <a class="dropdown-item" href="{% url 'Logout' %}">Log out</a>
                                     </div>
                                 </div>
                             </li>
                         {% else %}
-                        <li class="nav-item"><a class="nav-link" href="{% url 'Login' %}">Sign in</a>
+                        <li class="nav-item justify-content-center align-self-center"><a class="nav-link" href="{% url 'Login' %}">Sign in</a>
                          {% comment %}<form method="POST" action="{% url 'Login' %} ">
                             <input type="hidden" name="back" value="{{ request.path }}">
                         <button class="nav-link  btn btn-warning" type="submit">Sign In</button>
                         </form>{% endcomment %}
                         </li>
-                        <li class="nav-item"><a class="nav-link btn-warning btn" href="{% url 'Register' %}">Sign Up</a>
+                        <li class="nav-item justify-content-center align-self-center"><a class="nav-link btn-warning btn" href="{% url 'Register' %}">Sign Up</a>
                              {% comment %}<form method="POST" action="{% url 'Register' %}">
                             <input type="hidden" name="back" value="{{ request.path }}">
                             <button class="nav-link btn btn-warning" type="submit">Sign Up</button>

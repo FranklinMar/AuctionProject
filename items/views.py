@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from main.models import Item, User
 from django.views.decorators.cache import never_cache
@@ -24,11 +24,15 @@ def items(request):
 def add(request):
     if 'name' in request.session:
         if request.method == 'POST':
-            form = Item_form(request.POST)
+            print("SECTOR 1")
+            form = ItemForm(request.POST, request.FILES)
             if form.is_valid():
-                item = Item.create(form.cleaned_data['name'], form.cleaned_data['description'],\
-                                   User.find_one({'name': request.session['name']}).id,\
-                                   form.cleaned_data['image'])
-                return HttpResponseRedirect('/item/'+str(item.id)+"/")
-        return render(request, "main/add_item.html", {"item": Item_form()})
-    return HttpResponseRedirect('/item/')
+                print("SECTOR 2")
+                item = Item.create(form.cleaned_data['name'], form.cleaned_data['description'],
+                                   owner=User.find_one({'name': request.session['name']}).id,
+                                   image=form.cleaned_data['image'])
+
+                print("SECTOR 3")
+                return redirect('Item', id=item.id)
+        return render(request, "main/add_item.html", {"item": ItemForm()})
+    return redirect('Items')

@@ -10,14 +10,21 @@
                         <div class="rounded-top text-white d-flex flex-row"
                              style="background-color: #000; height:200px;">
                             <div class="ms-4 mt-5 d-flex flex-column" style="width: 150px;">
-                                <img src="/media/{{ user.image }}"
-                                     alt="..." class="img-fluid img-thumbnail mt-4"
+                                <img id="image" src="/media/{{ user.image }}"
+                                     alt="..." class="bg-warning border-warning img-fluid img-thumbnail mt-4"
                                      style="width: 150px; z-index: 1">
 
                             </div>
-                            <div class="ms-3" style="margin-top: 130px;">
+                            <div class="ms-3 w-50" style="margin-top: 100px;">
                                 <h5>{{ user.name }}</h5>
-                                <p>{{ user.email }}</p>
+                                <div class="form-floating bg-transparent mb-2 text-white">
+                                    {% csrf_token %}
+                                    {{ email_form.email }}
+                                    <label for="{{ email_form.email.auto_id }}" style="display: none" class="form-label text-warning bg-transparent">{{ email_form.email.label }}</label>
+                                    <p class="field">{{ user.email }}</p>
+                                </div>
+                                {% comment %}{% csrf_token %}
+                                {{ password_form.password }}{% endcomment %}
                             </div>
                         </div>
                         <div class="p-4 text-black" style="background-color: #f8f9fa;">
@@ -84,7 +91,20 @@
 <script src="{% static '/main/js/imaging.js' %}">
 </script>
 <script>
-loadURLToInputFiled('/media/images/items/default.jpg', 'default.jpg')
+let image = document.querySelector('#image').src;
+loadURLToInputFiled(image, image.replace(/^.*[\\\/]/, ''))
+let fields = document.querySelectorAll('.field');
+console.log(fields)
+for (let i = 0; i < fields.length; i++){
+    fields[i].ondblclick = function (){
+        console.log(this)
+        let input = this.parentNode.querySelector('input:not([type="hidden"])');
+        console.log(input)
+        input.removeAttribute('style');
+        this.setAttribute('style', 'display:none')
+        input.parentNode.querySelector(`label[for="${input.id}"]`).removeAttribute('style')
+    };
+}
 </script>
 {% comment %}<img src='{{ user.image }}' width='400' ></img>
 <form enctype="multipart/form-data" method="post" action="{{request.path}}">

@@ -4,13 +4,17 @@ from django.forms import Form, CharField, PasswordInput, EmailInput, ImageField,
 
 class Change_email(Form):
     email = CharField(label='Email Address', widget=EmailInput(attrs={
-        'class': 'form-control bg-dark text-white form-control-sm'
+        'class': 'form-control bg-transparent text-white form-control-sm',
+        'placeholder': 'Email',
+        'style': 'display: none'
     }))
 
 
 class Change_password(Form):
     password = CharField(label='Password', widget=PasswordInput(attrs={
-        'class': 'form-control bg-dark text-white form-control-sm'
+        'class': 'mb-2 bg-dark text-white form-control form-control-sm',
+        'placeholder': 'Password',
+        'style': 'display: none'
     }))
 
 
