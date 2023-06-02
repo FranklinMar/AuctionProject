@@ -5,4 +5,4 @@ __Auction__ is a *Python-based Django Web-Application* course project of student
 #### __Participants:__
   * [Berezniuk Denys - Repository owner/Developer](https://github.com/FranklinMar)
   * [Demianyk Dmytro - Developer](https://github.com/DemaReaktor)
-  * Oleg Tymchuk - Mentor
+  * [Oleg Tymchuk - Mentor](https://www.linkedin.com/in/oleh-tymchuk-03a27277/)
