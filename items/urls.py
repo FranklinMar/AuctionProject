@@ -18,7 +18,7 @@ from items.views import item_id, auction, items, add
 
 urlpatterns = [
     path('', items, name='Items'),
-    path('add/', add, name='Item_create'),
+    path('add/', add, name='ItemCreate'),
     path('<str:id>/', item_id, name='Item'),
     path('auction/<str:id>/', auction, name='Auction'),
 ]

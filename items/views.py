@@ -10,7 +10,7 @@ from django.http import HttpResponseRedirect
 # Create your views here.
 @never_cache
 def item_id(request, id: str):
-    return render(request, "main/item.html", {"item": Item.find_one({"_id": ObjectId(id)}), "items": Item.all()})
+    return render(request, "items/item.html", {"item": Item.find_one({"_id": ObjectId(id)}), "items": Item.all()})
 
 
 def auction(request, id: str):
@@ -18,7 +18,7 @@ def auction(request, id: str):
 
 
 def items(request):
-    return render(request, 'main/items.html', {"items": Item.all()})
+    return render(request, 'items/items.html', {"items": Item.all()})
 
 
 def add(request):
@@ -34,5 +34,5 @@ def add(request):
 
                 print("SECTOR 3")
                 return redirect('Item', id=item.id)
-        return render(request, "main/add_item.html", {"item": ItemForm()})
+        return render(request, "items/add_item.html", {"item": ItemForm()})
     return redirect('Items')

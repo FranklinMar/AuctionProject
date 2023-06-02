@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from main.models import User
 from django.contrib.auth.hashers import make_password, check_password
-from authorize.models import *
+from authorize.forms import *
 from django.views.decorators.cache import never_cache
 from django.http import HttpResponseRedirect
 
@@ -15,17 +15,17 @@ def login(request):
         if form.is_valid():
             user = User.find_one({'name': form.cleaned_data['login']})
             if user is None:
-                return render(request, 'main/signin.html', {'back': request.POST.get('back', ''), 'form': Login(),
+                return render(request, 'auth/signin.html', {'back': request.POST.get('back', ''), 'form': Login(),
                                                             'error': 'Неправильний логін'})
             if not(check_password(form.cleaned_data['password'], user.password)):
-                return render(request, 'main/signin.html', {'back': request.POST.get('back', ''), 'form': Login(),
+                return render(request, 'auth/signin.html', {'back': request.POST.get('back', ''), 'form': Login(),
                                                             'error': 'Неправильний пароль'})
             request.session['name'] = user.name
             request.session['image'] = user.image
             print(2)
             print(request.POST.get('back', ''))
-            return HttpResponseRedirect(request.POST.get('back', ''))
-    return render(request, 'main/signin.html', {'back': request.POST.get('back', ''), 'form': Login()})
+            return redirect(request.POST.get('back', ''))
+    return render(request, 'auth/signin.html', {'back': request.POST.get('back', ''), 'form': Login()})
 
 
 def logout(request):
@@ -50,6 +50,6 @@ def create_user(request):
                 request.session['image'] = user.image
                 return HttpResponseRedirect(request.POST.get('back', ''))
             except ValueError as error:
-                return render(request, 'main/signup.html', {'back': request.POST.get('back', ''),
+                return render(request, 'auth/signup.html', {'back': request.POST.get('back', ''),
                                             'form': CreateUser(), 'error': error})
-    return render(request, 'main/signup.html', {'back': request.POST.get('back', ''), 'form': CreateUser()})
+    return render(request, 'auth/signup.html', {'back': request.POST.get('back', ''), 'form': CreateUser()})
