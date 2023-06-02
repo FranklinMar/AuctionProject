@@ -5,8 +5,11 @@ from authorize.models import *
 from django.views.decorators.cache import never_cache
 from django.http import HttpResponseRedirect
 
+
 @never_cache
 def login(request):
+    if request.session['name']:
+        return HttpResponseRedirect('/')
     if request.method == 'POST':
         form = Login(request.POST)
         if form.is_valid():
@@ -24,6 +27,7 @@ def login(request):
             return HttpResponseRedirect(request.POST.get('back', ''))
     return render(request, 'main/signin.html', {'back': request.POST.get('back', ''), 'form': Login()})
 
+
 def logout(request):
     request.session.pop('name')
     request.session.pop('image')
@@ -32,7 +36,9 @@ def logout(request):
 
 @never_cache
 def create_user(request):
-    print(1)
+    if request.session['name']:
+        return HttpResponseRedirect('/')
+    # print(1)
     print(request.POST.get('back', ''))
     if request.method == 'POST':
         form = CreateUser(request.POST)
