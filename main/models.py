@@ -2,7 +2,7 @@ import datetime
 from functools import partial
 
 from bson import ObjectId
-from AuctionProject.settings import MEDIA_ROOT
+from AuctionProject.settings import MEDIA_URL
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db import models
 from pymongo import MongoClient
@@ -36,7 +36,7 @@ class User:
     __roles = ('admin', 'mod', 'user', 'guest')
 
     def __init__(self, _id, name, password, email, balance=0, role='user',
-                 image='images/users/default.png', items=[], chats=[]):
+                 image='images/users/default.png'):  # , items=[], chats=[]):
         self.__id = _id
         self.__name = name
         self.__password = password
@@ -44,8 +44,8 @@ class User:
         self.__balance = balance
         self.__role = role
         self.__image = image
-        self.__items = items
-        self.__chats = chats
+        # self.__items = items
+        # self.__chats = chats
 
     def save(self):
         # dictionary = self.get_vars()  # {key.replace('_User__', ''): self.__dict__[key] for key in self.__dict__}
@@ -153,51 +153,51 @@ class User:
             filename = f'images/users/{hash_file(value)}.{value.content_type.split("/")[-1]}'
             if not file_storage.exists(filename):
                 file_storage.save(filename, value)
-            filename = str(MEDIA_ROOT) + "/" + filename
+            filename = MEDIA_URL + "/" + filename
         else:
             raise TypeError(f"Property type must be 'str' or 'InMemoryUploadedFile', not '{type(value).__name__}'")
         self.__image = filename
         self.save()
 
-    @property
-    def items(self):
-        return self.__items
-
-    def items_list(self):
-        return [Item(**document) for document in DB['Item'].find({"_id": {"$in": self.__items}})]
-
-    @items.setter
-    def items(self, value):
-        if not isinstance(value, list):
-            raise TypeError(f"Property type must be a list of 'ObjectId', not '{type(value).__name__}'")
-        if not all(isinstance(item, ObjectId) for item in value):
-            raise TypeError(f"Property type inside list must be 'ObjectId'")
-        if len(value) != len(list(DB['Item'].find({"_id": {"$in": value}}))):
-            # items_collection = DB['Item']
-            # if len(value) != len([items_collection.find_one({"_id": item}) for item in value]):
-            raise ValidationError("Not all items found")
-        self.__items = value
-
-    @property
-    def chats(self):
-        return self.__chats
-
-    @chats.setter
-    def chats(self, value):
-        if not isinstance(value, list):
-            raise TypeError(f"Property type must be a list of 'ObjectId', not '{type(value).__name__}'")
-        if not all(isinstance(item, ObjectId) for item in value):
-            raise TypeError(f"Property type inside list must be 'ObjectId'")
-        if len(value) != len(list(DB['Chat'].find({"_id": {"$in": value}}))):
-            # if len(value) != len([chats_collection.find_one({"_id": item}) for item in value]):
-            raise ValidationError("Not all items found")
-        self.__chats = value
-
-    def chats_list(self):
-        chats_collection = DB['Chat']
-        # return [chats_collection.find_one({"_id": item} for item in self.items)]
-        # return chats_collection.find({"_id": {"$in": self.__chats}})
-        return [Chat(**document) for document in chats_collection.find({"_id": {"$in": self.__chats}})]
+    # @property
+    # def items(self):
+    #     return self.__items
+    #
+    # def items_list(self):
+    #     return [Item(**document) for document in DB['Item'].find({"_id": {"$in": self.__items}})]
+    #
+    # @items.setter
+    # def items(self, value):
+    #     if not isinstance(value, list):
+    #         raise TypeError(f"Property type must be a list of 'ObjectId', not '{type(value).__name__}'")
+    #     if not all(isinstance(item, ObjectId) for item in value):
+    #         raise TypeError(f"Property type inside list must be 'ObjectId'")
+    #     if len(value) != len(list(DB['Item'].find({"_id": {"$in": value}}))):
+    #         # items_collection = DB['Item']
+    #         # if len(value) != len([items_collection.find_one({"_id": item}) for item in value]):
+    #         raise ValidationError("Not all items found")
+    #     self.__items = value
+    #
+    # @property
+    # def chats(self):
+    #     return self.__chats
+    #
+    # @chats.setter
+    # def chats(self, value):
+    #     if not isinstance(value, list):
+    #         raise TypeError(f"Property type must be a list of 'ObjectId', not '{type(value).__name__}'")
+    #     if not all(isinstance(item, ObjectId) for item in value):
+    #         raise TypeError(f"Property type inside list must be 'ObjectId'")
+    #     if len(value) != len(list(DB['Chat'].find({"_id": {"$in": value}}))):
+    #         # if len(value) != len([chats_collection.find_one({"_id": item}) for item in value]):
+    #         raise ValidationError("Not all items found")
+    #     self.__chats = value
+    #
+    # def chats_list(self):
+    #     chats_collection = DB['Chat']
+    #     # return [chats_collection.find_one({"_id": item} for item in self.items)]
+    #     # return chats_collection.find({"_id": {"$in": self.__chats}})
+    #     return [Chat(**document) for document in chats_collection.find({"_id": {"$in": self.__chats}})]
 
     @classmethod
     def all(cls):
@@ -401,6 +401,7 @@ class Item:
             filename = f'images/items/{hash_file(value)}.{value.content_type.split("/")[-1]}'
             if not file_storage.exists(filename):
                 file_storage.save(filename, value)
+            filename = MEDIA_URL + filename
         else:
             raise TypeError(f"Property type must be 'str' or 'InMemoryUploadedFile', not '{type(value).__name__}'")
 
