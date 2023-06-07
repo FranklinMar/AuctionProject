@@ -44,6 +44,7 @@ class User:
         self.__balance = balance
         self.__role = role
         self.__image = image
+        # self.online = False
         # self.__items = items
         # self.__chats = chats
 
@@ -159,6 +160,15 @@ class User:
         self.__image = filename
         self.save()
 
+    # @property
+    # def online(self):
+    #     return self.__online is None
+
+    # @online.setter
+    # def online(self, value):
+    #     if not isinstance(value, bool):
+    #         raise TypeError(f"Property type must be 'bool', not '{type(value).__name__}'")
+    #     self.__online = None if value else datetime.utcnow()
     # @property
     # def items(self):
     #     return self.__items
@@ -334,7 +344,7 @@ class Item:
         dictionary = {key.replace('_Item__', ''): self.__dict__[key] for key in self.__dict__}
         dictionary['auction'] = self.auction.get_vars() if self.auction else self.auction
         dictionary['owner'] = self.owner
-        dictionary.pop('id')
+        # dictionary.pop('id')
         return dictionary
 
     @property
@@ -448,14 +458,14 @@ class Chat:
     def __init__(self, _id, user1, user2, messages=[]):
         self.user1 = user1
         self.user2 = user2
-        print(messages)
+        # print(messages)
         self.messages = messages
-        print(self.messages)
+        # print(self.messages)
         self.__id = _id
 
     def save(self):
         dictionary = self.get_vars()
-        return self.__collection.update_one(filter={"_id": self.__id}, update={'set':dictionary})
+        return self.__collection.update_one(filter={"_id": self.__id}, update={'$set': dictionary})
 
     @classmethod
     def update(cls, obj):
@@ -466,8 +476,9 @@ class Chat:
 
     def get_vars(self):
         dictionary = {key.replace('_Chat__', ''): self.__dict__[key] for key in self.__dict__}
-
-        dictionary['messages'] = [message.get_vars() for message in self.__messages]
+        print(dictionary)
+        dictionary.pop('id')
+        # dictionary['messages'] = [message.get_vars() for message in self.__messages]
         return dictionary
 
     @property
@@ -490,7 +501,7 @@ class Chat:
     def user1(self, value):
         if not isinstance(value, ObjectId):
             raise TypeError(f"Property type must be 'ObjectId', not '{type(value).__name__}'")
-        if hasattr(self,'__user2') and value == self.__user2:
+        if hasattr(self, '__user2') and value == self.__user2:
             raise ValueError(f"Value of property must be not value of value other user")
         self.__user1 = value
 
@@ -508,7 +519,16 @@ class Chat:
 
     @property
     def messages(self):
-        return [ Message.find_one({'_id':ObjectId(message)}) for message in self.__messages]
+        # list_messages = [Message.find_one({'_id': ObjectId(message)}) for message in self.__messages]
+        list_messages = []
+        # message = None
+        for _id in self.__messages:
+            message = Message.find_one({'_id': ObjectId(_id)})
+            if not message:
+                self.__messages.remove(_id)
+                self.save()
+            list_messages.append(message)
+        return list_messages
 
     @messages.setter
     def messages(self, value):
@@ -518,8 +538,8 @@ class Chat:
             raise TypeError(f"Property type inside list must be 'ObjectId'")
         self.__messages = value
 
-    def messages_list(self):
-        return [Message(**document) for document in DB['Message'].find({"id", {"$in": self.__messages}})]
+    # def messages_list(self):
+    #     return [Message(**document) for document in DB['Message'].find({"id", {"$in": self.__messages}})]
 
     @classmethod
     def all(cls):
@@ -539,6 +559,8 @@ class Chat:
         document = cls.__collection.find_one({'$and': [{'user1': {'$in': users}}, {'user2': {'$in': users}}]})
         if document is None:
             return None
+        # print(document)
+        # document['_id'] = document.pop('_id')
         return cls(**document)
 
     @classmethod
@@ -551,14 +573,15 @@ class Chat:
         chat.id = chat.__collection.insert_one(chat.get_vars()).inserted_id
         return chat
 
-    def send(self,message):
+    def send(self, message):
         self.__messages.append(message.id)
-        Chat.__collection.update_one(filter={"_id": self.__id}, update={'$push':{'messages':ObjectId(message.id)}})
+        Chat.__collection.update_one(filter={"_id": self.__id}, update={'$push': {'messages': ObjectId(message.id)}})
+
 
 class Message:
     __collection = DB['Message']
 
-    def __init__(self, id, text, user, image=None, url=None,time=None):
+    def __init__(self, _id, text, user, image=None, url=None, time=None):
         self.__id = id
         self.__text = text
         self.__user = user
@@ -610,6 +633,8 @@ class Message:
     def text(self, value):
         if not isinstance(value, str):
             raise TypeError(f"Property type must be 'str', not '{type(value).__name__}'")
+        if len(value) <= 0:
+            raise ValidationError("Empty property 'text' is not allowed")
         self.__text = value
 
     @property
@@ -645,7 +670,7 @@ class Message:
         document = cls.__collection.find_one(filter=filter_)
         if not document:
             return document
-        document['id'] = document.pop('_id')
+        # document['id'] = document.pop('_id')
         return cls(**document)
 
     @classmethod
@@ -655,6 +680,7 @@ class Message:
     @classmethod
     def create(cls, text, user, image=None, url=None):
         message = cls(None, text, user, image, url)
+        print(message.get_vars())
         message.id = cls.__collection.insert_one(message.get_vars()).inserted_id
         return message
 
