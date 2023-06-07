@@ -36,7 +36,7 @@ class User:
     __roles = ('admin', 'mod', 'user', 'guest')
 
     def __init__(self, _id, name, password, email, balance=0, role='user',
-                 image='images/users/default.png'):  # , items=[], chats=[]):
+                 image='images/users/default.png', chats=[]):  # , items=[]):
         self.__id = _id
         self.__name = name
         self.__password = password
@@ -46,12 +46,12 @@ class User:
         self.__image = image
         # self.online = False
         # self.__items = items
-        # self.__chats = chats
+        self.__chats = chats
 
     def save(self):
         # dictionary = self.get_vars()  # {key.replace('_User__', ''): self.__dict__[key] for key in self.__dict__}
         # dictionary.pop('id')
-        return self.__collection.update_one(filter={"_id": self.__id}, update={'$set':self.get_vars()})
+        return self.__collection.update_one(filter={"_id": self.__id}, update={'$set': self.get_vars()})
 
     @classmethod
     def update(cls, obj):
@@ -187,27 +187,28 @@ class User:
     #         # if len(value) != len([items_collection.find_one({"_id": item}) for item in value]):
     #         raise ValidationError("Not all items found")
     #     self.__items = value
-    #
-    # @property
-    # def chats(self):
-    #     return self.__chats
-    #
-    # @chats.setter
-    # def chats(self, value):
-    #     if not isinstance(value, list):
-    #         raise TypeError(f"Property type must be a list of 'ObjectId', not '{type(value).__name__}'")
-    #     if not all(isinstance(item, ObjectId) for item in value):
-    #         raise TypeError(f"Property type inside list must be 'ObjectId'")
-    #     if len(value) != len(list(DB['Chat'].find({"_id": {"$in": value}}))):
-    #         # if len(value) != len([chats_collection.find_one({"_id": item}) for item in value]):
-    #         raise ValidationError("Not all items found")
-    #     self.__chats = value
-    #
-    # def chats_list(self):
-    #     chats_collection = DB['Chat']
-    #     # return [chats_collection.find_one({"_id": item} for item in self.items)]
-    #     # return chats_collection.find({"_id": {"$in": self.__chats}})
-    #     return [Chat(**document) for document in chats_collection.find({"_id": {"$in": self.__chats}})]
+
+    @property
+    def chats(self):
+        return self.__chats
+
+    @chats.setter
+    def chats(self, value):
+        if not isinstance(value, list):
+            raise TypeError(f"Property type must be a list of 'ObjectId', not '{type(value).__name__}'")
+        if not all(isinstance(item, ObjectId) for item in value):
+            raise TypeError(f"Property type inside list must be 'ObjectId'")
+        if len(value) != len(list(DB['Chat'].find({"_id": {"$in": value}}))):
+            # if len(value) != len([chats_collection.find_one({"_id": item}) for item in value]):
+            raise ValidationError("Not all items found")
+        self.__chats = value
+
+
+    def chats_list(self):
+        chats_collection = DB['Chat']
+        # return [chats_collection.find_one({"_id": item} for item in self.items)]
+        # return chats_collection.find({"_id": {"$in": self.__chats}})
+        return [Chat(**document) for document in chats_collection.find({"_id": {"$in": self.__chats}})]
 
     @classmethod
     def all(cls):
@@ -226,21 +227,21 @@ class User:
         return cls.__collection.find(filter=filter_)
 
     @classmethod
-    def create(cls, name, password, email, balance=0, role='user', image='images/users/default.png',
-               items=[], chats=[]):
-        if not(User.find_one({'name':name}) is None):
-            raise ValueError("акаунт з цим ім'ям вже існує")
-        if not(User.find_one({'email':email}) is None):
-            raise ValueError("акаунт з цим емейлом вже існує")
-        user = cls(None, name, make_password(password), email, balance, role, image, items, chats)
+    def create(cls, name, password, email, balance=0, role='user', image='images/users/default.png', chats=[]):
+        #       items=[], chats=[]):
+        # if not(User.find_one({'name': name}) is None):
+        #     raise ValueError("акаунт з цим ім'ям вже існує")
+        # if not(User.find_one({'email': email}) is None):
+        #     raise ValueError("акаунт з цим емейлом вже існує")
+        user = cls(None, name, password, email, balance, role, image, chats)  # , items
         user.id = cls.__collection.insert_one(user.get_vars()).inserted_id
         return user
 
 
 class Auction:
 
-    def __init__(self, name, start_bid, bid_user=None, deadline=None):
-        self.__name = name
+    def __init__(self, start_bid, bid_user=None, deadline=None):  # , name
+        # self.__name = name
         self.__start_bid = start_bid
         self.__bid = start_bid
         self.__bid_user = bid_user
@@ -251,15 +252,15 @@ class Auction:
     def get_vars(self):
         return {key.replace('_Auction__', ''): self.__dict__[key] for key in self.__dict__}
 
-    @property
-    def name(self):
-        return self.__name
-
-    @name.setter
-    def name(self, value):
-        if not isinstance(value, str):
-            raise TypeError(f"Property type must be 'str', not '{type(value).__name__}'")
-        self.__name = value
+    # @property
+    # def name(self):
+    #     return self.__name
+    #
+    # @name.setter
+    # def name(self, value):
+    #     if not isinstance(value, str):
+    #         raise TypeError(f"Property type must be 'str', not '{type(value).__name__}'")
+    #     self.__name = value
 
     @property
     def start_bid(self):
@@ -639,7 +640,7 @@ class Message:
 
     @property
     def user(self):
-        return User.find_one({'_id':self.__user})
+        return User.find_one({'_id': self.__user})
 
     @user.setter
     def user(self, value):

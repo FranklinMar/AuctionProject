@@ -3,18 +3,23 @@ from django.http import HttpResponse
 from main.models import Item, User
 from django.views.decorators.cache import never_cache
 from bson import ObjectId
-from items.models import *
+from items.forms import *
 from django.http import HttpResponseRedirect
 
 
 # Create your views here.
 @never_cache
 def item_id(request, id: str):
-    return render(request, "items/item.html", {"item": Item.find_one({"_id": ObjectId(id)}), "items": Item.all()})
+    item = Item.find_one({"_id": ObjectId(id)})
+    item_list = [it for it in Item.all() if it.id != item.id]
+    params = {"item": item, "items": item_list[:4]}
+    if 'name' in request.session:
+        params['form'] = CreateAuction()
+    return render(request, "items/item.html", params)
 
 
 def auction(request, id: str):
-    return HttpResponse("<h1>auction of item: "+id+"<h1>")
+    return render(request, "items/auction.html", {"item": Item.find_one({"_id": ObjectId(id)}), "items": Item.all()[:4]})
 
 
 def items(request):
@@ -36,3 +41,4 @@ def add(request):
                 return redirect('Item', id=item.id)
         return render(request, "items/add_item.html", {"item": ItemForm()})
     return redirect('Items')
+

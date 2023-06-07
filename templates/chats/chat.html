@@ -83,22 +83,27 @@
                     <div class="chat-history" style="max-height: 378px; height:100%;overflow-y: auto">
                         <ul class="m-b-0">
                             {% for message in chat.messages %}
-                                {% if message.user != user.id %}
-                                <li class="clearfix">
+                                {% comment %}<li class="clearfix">
                                     <div class="message-data text-right">
                                         <span class="message-data-time">{{ message.time|time:"g:i A D" }}</span>
 {#                                        <img src="htt.ps://bootdey.com/img/Content/avatar/avatar7.png" alt="avatar">#}
                                     </div>
                                     <div class="message other-message float-right">{{ message.text }}</div>
-                                </li>
-                                {% else %}
+                                </li>{% endcomment %}
                                 <li class="clearfix">
-                                    <div class="message-data">
-                                        <span class="message-data-time">{{ message.time|time:"g:i A D" }}</span>
-                                    </div>
-                                    <div class="message my-message">{{ message.text }}</div>
+                                    {% if message.user != user.id %}
+                                        <div class="message-data text-right">
+                                            <span class="message-data-time">{{ message.time|time:"g:i A D" }}</span>
+    {#                                        <img src="htt.ps://bootdey.com/img/Content/avatar/avatar7.png" alt="avatar">#}
+                                        </div>
+                                        <div class="message other-message float-right">{{ message.text }}</div>
+                                    {% else %}
+                                        <div class="message-data">
+                                            <span class="message-data-time">{{ message.time|time:"g:i A D" }}</span>
+                                        </div>
+                                        <div class="message my-message">{{ message.text }}</div>
+                                    {% endif %}
                                 </li>
-                                {% endif %}
                             {% comment %}<li class="clearfix">
                                 <div class="message-data">
                                     <span class="message-data-time">10:12 AM, Today</span>
