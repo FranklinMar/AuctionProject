@@ -61,8 +61,13 @@ class User:
         return self.__collection.delete_one(filter={"_id": self.__id})
 
     def get_vars(self):
-        dictionary = {key.replace('_User__', ''): self.__dict__[key] for key in self.__dict__}
+        dictionary = self.get_vars_with_id()
         dictionary.pop('id')
+        return dictionary
+
+    def get_vars_with_id(self):
+        dictionary ={key.replace('_User__', ''): self.__dict__[key] for key in self.__dict__}
+        dictionary['id'] = str(dictionary['id'])
         return dictionary
 
     def try_login(self, password):
