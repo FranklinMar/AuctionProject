@@ -115,6 +115,10 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',  # This is the default that allows us to log in via username
+    'authorize.authentication.AuthBackend'
+]
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
