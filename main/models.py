@@ -11,7 +11,7 @@ from django.conf import settings
 # Create your models here.
 # from djongo import models
 from django.core.exceptions import ValidationError
-from django.contrib.auth.hashers import make_password  # , check_password
+from django.contrib.auth.hashers import make_password , check_password
 from django.contrib.auth.password_validation import validate_password
 from django.core.files.storage import default_storage
 from PIL import Image
@@ -71,7 +71,7 @@ class User:
         return dictionary
 
     def try_login(self, password):
-        return make_password(password) == self.password
+        return check_password(password,self.password)
 
     @property
     def id(self):
@@ -103,7 +103,7 @@ class User:
     def password(self, value):
         if not isinstance(value, str):
             raise TypeError(f"Property type must be 'str', not '{type(value).__name__}'")
-        self.__password = make_password(value)
+        self.__password = value
         self.save()
 
     @property
@@ -237,7 +237,7 @@ class User:
         #     raise ValueError("акаунт з цим ім'ям вже існує")
         # if not(User.find_one({'email': email}) is None):
         #     raise ValueError("акаунт з цим емейлом вже існує")
-        user = cls(None, name, password, email, balance, role, image, chats)  # , items
+        user = cls(None, name, make_password(password), email, balance, role, image, chats)  # , items
         user.id = cls.__collection.insert_one(user.get_vars()).inserted_id
         return user
 
