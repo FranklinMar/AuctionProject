@@ -30,8 +30,10 @@ def login(request):
 
 
 def logout(request):
-    request.session.pop('name')
-    request.session.pop('image')
+    if 'name' in request.session:
+        request.session.pop('name')
+    if 'image' in request.session:
+        request.session.pop('image')
     return redirect('Home')
 
 

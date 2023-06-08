@@ -36,13 +36,13 @@ class User:
     __roles = ('admin', 'mod', 'user', 'guest')
 
     def __init__(self, _id, name, password, email, balance=0, role='user',
-                 image='images/users/default.png', chats=[]):  # , items=[]):
+                 image='/media/images/users/default.png', chats=[]):  # , items=[]):
         self.__id = _id
-        self.__name = name
-        self.__password = password
-        self.__email = email
-        self.__balance = balance
-        self.__role = role
+        self.name = name
+        self.password = password
+        self.email = email
+        self.balance = balance
+        self.role = role
         self.image = image
         # self.online = False
         # self.__items = items
@@ -145,14 +145,14 @@ class User:
     def image(self, value):
         # file_storage = FileSystemStorage()
         if isinstance(value, str):
-            if not default_storage.exists(str(MEDIA_ROOT) + value):
-                raise ValidationError('File does not exist in a storage')
+            # if not default_storage.exists(str(BASE_DIR) + '\\' + value):
+            #     raise ValidationError('File does not exist in a storage')
             filename = value
         elif isinstance(value, InMemoryUploadedFile):
             image = Image.open(value)
             image.verify()
             filename = f'images/users/{hash_file(value)}.{value.content_type.split("/")[-1]}'
-            if not default_storage.exists(str(MEDIA_ROOT) + filename):
+            if not default_storage.exists(MEDIA_ROOT / filename):
                 default_storage.save(filename, value)
             filename = MEDIA_URL + "/" + filename
         else:
@@ -226,7 +226,7 @@ class User:
         return cls.__collection.find(filter=filter_)
 
     @classmethod
-    def create(cls, name, password, email, balance=0, role='user', image='images/users/default.png', chats=[]):
+    def create(cls, name, password, email, balance=0, role='user', image='/media/images/users/default.png', chats=[]):
         #       items=[], chats=[]):
         # if not(User.find_one({'name': name}) is None):
         #     raise ValueError("акаунт з цим ім'ям вже існує")
@@ -241,11 +241,11 @@ class Auction:
 
     def __init__(self, start_bid, bid_user=None, start_date=None, deadline=None):  # , name
         # self.__name = name
-        self.__start_bid = start_bid
+        self.start_bid = start_bid
         self.__bid = start_bid
-        self.__bid_user = bid_user
-        self.__start_date = start_date
-        self.__deadline = deadline
+        self.bid_user = bid_user
+        self.start_date = start_date
+        self.deadline = deadline
         # dictionary = {key.replace('_Auction__', ''): self.__dict__[key] for key in self.__dict__}
         # self.__id = self.__users.insert_one(dictionary).inserted_id
 
@@ -327,13 +327,13 @@ class Auction:
 class Item:
     __collection = DB['Item']
 
-    def __init__(self, _id, name, description, owner, image='images/items/default.jpg', auction=None):
+    def __init__(self, _id, name, description, owner, image='/media/images/items/default.jpg', auction=None):
         self.__id = _id
-        self.__name = name
-        self.__description = description
-        self.__owner = owner
+        self.name = name
+        self.description = description
+        self.owner = owner
         self.image = image
-        self.__auction = auction
+        self.auction = auction
         # print(vars(self))
         # dictionary = self.get_vars()
         # document = self.__collection.find_one(dictionary)
@@ -419,15 +419,15 @@ class Item:
         # file_storage = FileSystemStorage()
         if isinstance(value, str):
             # print(sttBASE_DIR)
-            # print(str(BASE_DIR) + value)
-            if not default_storage.exists(str(MEDIA_ROOT) + value):
+            print(str(BASE_DIR) + value)
+            if not default_storage.exists(str(BASE_DIR) + value):
                 raise ValidationError('File does not exist in a storage')
             filename = value
         elif isinstance(value, InMemoryUploadedFile):
             image = Image.open(value)
             image.verify()
             filename = f'images/items/{hash_file(value)}.{value.content_type.split("/")[-1]}'
-            if not default_storage.exists(str(MEDIA_ROOT) + filename):
+            if not default_storage.exists(MEDIA_ROOT / filename):
                 default_storage.save(filename, value)
             filename = MEDIA_URL + filename
         else:
@@ -443,7 +443,7 @@ class Item:
 
     @auction.setter
     def auction(self, value):
-        if not isinstance(value, Auction):
+        if value and not isinstance(value, Auction):
             raise TypeError(f"Property type must be 'Auction', not '{type(value).__name__}'")
         self.__auction = value
 
@@ -464,7 +464,7 @@ class Item:
         return cls.__collection.find(filter=filter_)
 
     @classmethod
-    def create(cls, name, description, owner, image='images/items/default.jpg', auction=None):
+    def create(cls, name, description, owner, image='/media/images/items/default.jpg', auction=None):
         item = cls(None, name, description, owner, image, auction)
         print(item.get_vars())
         item.id = cls.__collection.insert_one(item.get_vars()).inserted_id
@@ -602,8 +602,8 @@ class Message:
 
     def __init__(self, _id, text, user, image=None, url=None, time=None):
         self.__id = id
-        self.__text = text
-        self.__user = user
+        self.text = text
+        self.user = user
         self.__time = time
         if self.__time is None:
             self.__time = datetime.utcnow()

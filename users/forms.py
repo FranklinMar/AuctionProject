@@ -18,7 +18,7 @@ class ChangePassword(Form):
 
 
 class ChangeImage(Form):
-    image = ImageField(label='Image', required=True, widget=FileInput(attrs={
+    image = ImageField(label='Image', widget=FileInput(attrs={
         'class': 'form-control bg-dark text-white form-control-sm mt-2 mb-2',
         'style': 'width: 100%; max-width: 1000px'
     }))
