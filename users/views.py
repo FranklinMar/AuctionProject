@@ -11,12 +11,12 @@ def user_profile(request, id: str):
         return render(request, 'main/error.html')
         # return HttpResponse("<h1>Error<h1>")
     return render(request, 'user/user.html', {'user': user
-        ,'is_own': 'name' in request.session and request.session['name'] == user.name})
+        ,'is_own': 'user' in request.session and request.session['user']['name'] == user.name})
 
 
 def user_settings(request, id: str):
     user = User.find_one({"name": id})
-    if not (user is None) and 'name' in request.session and request.session['name'] == user.name:
+    if not (user is None) and 'user' in request.session and request.session['user']['name'] == user.name:
         if request.method == 'POST':
             form = ChangeEmail(request.POST)
             if form.is_valid():
