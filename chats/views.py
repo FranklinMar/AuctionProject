@@ -14,6 +14,7 @@ def chat_id(request, id: str):
         if chat is None:
             chat = Chat.create(user1, user2)
         print(chat.messages)
+
         return render(request, 'chats/chat.html', {'chat': chat, 'user': user1, 'other_user': chat.user1
             if chat.user2.name == request.session['name'] else chat.user2})
     return render(request, 'main/error.html')
