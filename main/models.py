@@ -39,7 +39,7 @@ class User:
                  image='/media/images/users/default.png', chats=[]):  # , items=[]):
         self.__id = _id
         self.name = name
-        self.password = password
+        self.__password = password
         self.email = email
         self.balance = balance
         self.role = role
@@ -103,7 +103,7 @@ class User:
     def password(self, value):
         if not isinstance(value, str):
             raise TypeError(f"Property type must be 'str', not '{type(value).__name__}'")
-        self.__password = value
+        self.__password = make_password(value)
         self.save()
 
     @property
@@ -237,7 +237,8 @@ class User:
         #     raise ValueError("акаунт з цим ім'ям вже існує")
         # if not(User.find_one({'email': email}) is None):
         #     raise ValueError("акаунт з цим емейлом вже існує")
-        user = cls(None, name, make_password(password), email, balance, role, image, chats)  # , items
+        user = cls(None, name, password, email, balance, role, image, chats)  # , items
+        user.password = password
         user.id = cls.__collection.insert_one(user.get_vars()).inserted_id
         return user
 
@@ -314,7 +315,6 @@ class Auction:
         if value <= datetime.utcnow():
             raise ValidationError('Deadline cannot be put in the past')
         self.__start_date = value
-
 
     @property
     def deadline(self):

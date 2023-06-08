@@ -8,7 +8,7 @@
             <h2 class="section-heading text-uppercase text-white">Items</h2>
             <h3 class="section-subheading text-muted">Look at online active auctions in real time.</h3>
         </div>
-        {% if 'name' in request.session %}
+        {% if 'user' in request.session %}
             <a href="{% url 'ItemCreate' %}" class="mb-5 btn btn-dark btn-outline-primary w-100">Create item</a>
         {% endif %}
 {#        <a class="w-100 btn btn-success mb-5" href="#">Create New Recipe</a>#}
