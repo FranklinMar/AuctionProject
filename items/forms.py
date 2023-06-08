@@ -13,7 +13,7 @@ class ItemForm(Form):
         'class': 'mb-2 bg-dark text-white form-control form-control-sm',
         'placeholder': 'Description',
         'rows': '5'}))
-    image = ImageField(label='Image', required=True, widget=FileInput(attrs={
+    image = ImageField(label='Image', widget=FileInput(attrs={
         'class': 'form-control bg-dark text-white form-control-sm'
     }))
 

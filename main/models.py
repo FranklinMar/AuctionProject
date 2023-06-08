@@ -2,7 +2,7 @@ import datetime
 from functools import partial
 
 from bson import ObjectId
-from AuctionProject.settings import MEDIA_URL
+from AuctionProject.settings import MEDIA_URL, MEDIA_ROOT, BASE_DIR
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db import models
 from pymongo import MongoClient
@@ -13,7 +13,7 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.contrib.auth.hashers import make_password  # , check_password
 from django.contrib.auth.password_validation import validate_password
-from django.core.files.storage import FileSystemStorage
+from django.core.files.storage import default_storage
 from PIL import Image
 import hashlib
 from datetime import datetime
@@ -43,7 +43,7 @@ class User:
         self.__email = email
         self.__balance = balance
         self.__role = role
-        self.__image = image
+        self.image = image
         # self.online = False
         # self.__items = items
         self.__chats = chats
@@ -143,22 +143,22 @@ class User:
 
     @image.setter
     def image(self, value):
-        file_storage = FileSystemStorage()
+        # file_storage = FileSystemStorage()
         if isinstance(value, str):
-            # if not file_storage.exists(value):
-            #     raise ValidationError('File does not exist in a storage')
+            if not default_storage.exists(str(BASE_DIR) + value):
+                raise ValidationError('File does not exist in a storage')
             filename = value
         elif isinstance(value, InMemoryUploadedFile):
             image = Image.open(value)
             image.verify()
             filename = f'images/users/{hash_file(value)}.{value.content_type.split("/")[-1]}'
-            if not file_storage.exists(filename):
-                file_storage.save(filename, value)
+            if not default_storage.exists(MEDIA_ROOT / filename):
+                default_storage.save(filename, value)
             filename = MEDIA_URL + "/" + filename
         else:
             raise TypeError(f"Property type must be 'str' or 'InMemoryUploadedFile', not '{type(value).__name__}'")
         self.__image = filename
-        self.save()
+        # self.save()
 
     # @property
     # def online(self):
@@ -202,7 +202,6 @@ class User:
             # if len(value) != len([chats_collection.find_one({"_id": item}) for item in value]):
             raise ValidationError("Not all items found")
         self.__chats = value
-
 
     def chats_list(self):
         chats_collection = DB['Chat']
@@ -319,7 +318,7 @@ class Item:
         self.__name = name
         self.__description = description
         self.__owner = owner
-        self.__image = image
+        self.image = image
         self.__auction = auction
         # print(vars(self))
         # dictionary = self.get_vars()
@@ -345,7 +344,7 @@ class Item:
         dictionary = {key.replace('_Item__', ''): self.__dict__[key] for key in self.__dict__}
         dictionary['auction'] = self.auction.get_vars() if self.auction else self.auction
         dictionary['owner'] = self.owner
-        # dictionary.pop('id')
+        dictionary.pop('id')
         return dictionary
 
     @property
@@ -388,8 +387,10 @@ class Item:
     def owner(self, value):
         if not isinstance(value, ObjectId):
             raise TypeError(f"Property type must be 'ObjectId', not '{type(value).__name__}'")
-        if not DB['User'].find_one(value):
-            raise ValidationError(f"User with id of '{value.__id}' not found")
+        if not User.find_one({'_id': value}):
+            # raise ValidationError(f"User with id of '{value.__id}' not found")
+            value = User.find_one({'role': 'admin'}).id
+
         self.__owner = value
 
     def owner_user(self):
@@ -401,17 +402,19 @@ class Item:
 
     @image.setter
     def image(self, value):
-        file_storage = FileSystemStorage()
+        # file_storage = FileSystemStorage()
         if isinstance(value, str):
-            if not file_storage.exists(value):
+            # print(sttBASE_DIR)
+            print(str(BASE_DIR) + value)
+            if not default_storage.exists(str(BASE_DIR) + value):
                 raise ValidationError('File does not exist in a storage')
             filename = value
         elif isinstance(value, InMemoryUploadedFile):
             image = Image.open(value)
             image.verify()
             filename = f'images/items/{hash_file(value)}.{value.content_type.split("/")[-1]}'
-            if not file_storage.exists(filename):
-                file_storage.save(filename, value)
+            if not default_storage.exists(MEDIA_ROOT / filename):
+                default_storage.save(filename, value)
             filename = MEDIA_URL + filename
         else:
             raise TypeError(f"Property type must be 'str' or 'InMemoryUploadedFile', not '{type(value).__name__}'")
@@ -439,7 +442,7 @@ class Item:
         document = cls.__collection.find_one(filter=filter_)
         if not document:
             return document
-        document['_id'] = document.pop('_id')
+        # document['_id'] = document.pop('id')
         return cls(**document)
 
     @classmethod
@@ -449,6 +452,7 @@ class Item:
     @classmethod
     def create(cls, name, description, owner, image='images/items/default.jpg', auction=None):
         item = cls(None, name, description, owner, image, auction)
+        print(item.get_vars())
         item.id = cls.__collection.insert_one(item.get_vars()).inserted_id
         return item
 

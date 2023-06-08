@@ -7,7 +7,7 @@ img_inp.onchange = function() {
   }
 }
 
-function loadURLToInputFiled(url, fileName){
+function loadURLToInputField(url, fileName){
   getImgURL(url, (imgBlob)=>{
     // Load img blob to input
     // WIP: UTF8 character error
@@ -28,3 +28,11 @@ function getImgURL(url, callback){
   xhr.responseType = 'blob';
   xhr.send();
 }
+
+window.addEventListener('paste', e => {
+  if (e.clipboardData.files.length > 0) {
+    console.log(e.clipboardData.files);
+    img_inp.files = e.clipboardData.files;
+    img_inp.onchange()
+  }
+})

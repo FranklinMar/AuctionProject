@@ -28,6 +28,7 @@ def user_settings(request, id: str):
             if form.is_valid():
                 user.image = form.cleaned_data['image']
                 request.session['image'] = user.image
+            user.save()
         return render(request, 'user/user_settings.html', {'user': user,
                                                            'email_form': ChangeEmail(initial={'email': user.email}),
                                                            'password_form': ChangePassword(),

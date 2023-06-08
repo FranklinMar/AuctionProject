@@ -11,6 +11,8 @@ from django.http import HttpResponseRedirect
 @never_cache
 def item_id(request, id: str):
     item = Item.find_one({"_id": ObjectId(id)})
+    if not item:
+        return render(request, "main/error.html")
     item_list = [it for it in Item.all() if it.id != item.id]
     params = {"item": item, "items": item_list[:4]}
     if 'name' in request.session:
@@ -29,16 +31,21 @@ def items(request):
 def add(request):
     if 'name' in request.session:
         if request.method == 'POST':
-            print("SECTOR 1")
+            # print("SECTOR 1")
+            # print(request.POST['image'])
             form = ItemForm(request.POST, request.FILES)
             if form.is_valid():
-                print("SECTOR 2")
+                # print("SECTOR 2")
                 item = Item.create(form.cleaned_data['name'], form.cleaned_data['description'],
                                    owner=User.find_one({'name': request.session['name']}).id,
                                    image=form.cleaned_data['image'])
 
-                print("SECTOR 3")
+                # print("SECTOR 3")
                 return redirect('Item', id=item.id)
-        return render(request, "items/add_item.html", {"item": ItemForm()})
+            else:
+                print(form.errors)
+        else:
+            form = ItemForm()
+        return render(request, "items/add_item.html", {"item": form})
     return redirect('Items')
 

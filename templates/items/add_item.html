@@ -2,10 +2,9 @@
 {% load static %}
 
 {% block body %}
-
 <section class="page-section bg-dark" id="item">
     <section class="py-5">
-        <form method="post" action="{{request.path}}" class="container px-4 px-lg-5 my-5">
+        <form enctype="multipart/form-data" method="POST" action="{{request.path}}" class="container px-4 px-lg-5 my-5">
             <div class="row gx-4 gx-lg-5 align-items-center">
                 <div class="text-center">
                     <h2 class="section-heading text-uppercase text-white">Create Item</h2>
@@ -14,10 +13,14 @@
                     <img id="image" class="border border-dark rounded-3 card-img-top mb-3" src="/media/images/items/default.jpg" alt="..." />
                     {% csrf_token %}
                     {{ item.image }}
+                    {% for error in item.image.errors %}
+                        <div class="text-danger p-3">{{ error }}</div>
+                    {% endfor %}
                 </div>
                 <div class="col-md-6">
-                     {% csrf_token %}
-                     {{ item.name }}
+                    {% csrf_token %}
+                    {{ item.name }}
+{#                    {{ item.name.errors }}#}
                     <div class="fs-5 mb-5">
     {#                    <span class="text-decoration-line-through">$45.00</span>#}
     {#                    <span>$40.00</span>#}
@@ -25,6 +28,7 @@
 
                         {% csrf_token %}
                         {{ item.description }}
+{#                        {{ item.description.errors }}#}
 {#                     </p>#}
                         <div class="d-flex">
                               <button type="submit" class="btn btn-outline-success w-100" name="add">Create</button>
@@ -48,6 +52,6 @@
 </script>
 <script>
 let image = document.querySelector('#image').src;
-loadURLToInputFiled(image, image.replace(/^.*[\\\/]/, ''))
+loadURLToInputField(image, image.replace(/^.*[\\\/]/, ''))
 </script>
 {% endblock %}
