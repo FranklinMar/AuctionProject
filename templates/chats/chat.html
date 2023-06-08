@@ -91,15 +91,16 @@
                                     <div class="message other-message float-right">{{ message.text }}</div>
                                 </li>{% endcomment %}
                                 <li class="clearfix">
-                                    {% if message.user != user.id %}
-                                        <div class="message-data text-right">
-                                            <span class="message-data-time">{{ message.time|time:"g:i A D" }}</span>
+                                    {% if message.user.name == request.session.user.name %}
+                                        <div class="message-data justify-content-end float-right">
+                                            <span class="message-data-time m-auto w-100">{{ message.time|time:"g:i A" }}</span>
     {#                                        <img src="htt.ps://bootdey.com/img/Content/avatar/avatar7.png" alt="avatar">#}
                                         </div>
+                                        <br>
                                         <div class="message other-message float-right">{{ message.text }}</div>
                                     {% else %}
                                         <div class="message-data">
-                                            <span class="message-data-time">{{ message.time|time:"g:i A D" }}</span>
+                                            <span class="message-data-time">{{ message.time|time:"g:i A" }}</span>
                                         </div>
                                         <div class="message my-message">{{ message.text }}</div>
                                     {% endif %}
@@ -143,5 +144,7 @@ function empty() {
         form.submit()
     }
 }
+let chat = document.querySelector('.chat-history');
+chat.scrollTop = chat.scrollHeight;
 </script>
 {% endblock %}
