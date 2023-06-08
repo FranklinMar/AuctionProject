@@ -15,6 +15,8 @@ def item_id(request, id: str):
         return render(request, "main/error.html")
     item_list = [it for it in Item.all() if it.id != item.id]
     params = {"item": item, "items": item_list[:4]}
+    # if request.method == 'POST':
+
     if 'name' in request.session:
         params['form'] = CreateAuction()
     return render(request, "items/item.html", params)

@@ -29,10 +29,15 @@ class CreateAuction(Form):
         'class': 'mb-2 bg-transparent text-white form-control form-control-sm',
         'placeholder': 'Start bid'
     }))
+    start_date = DateTimeField(label='Launch date', validators=[date_validation], widget=DateTimeInput(attrs={
+        'class': 'mb-2 bg-transparent text-white form-control form-control-sm',
+        'placeholder': 'Launch date',
+        'id': 'launch',
+        # 'value': datetime.utcnow()
+    }))
     deadline = DateTimeField(label='Deadline', validators=[date_validation], widget=DateTimeInput(attrs={
         'class': 'mb-2 bg-transparent text-white form-control form-control-sm',
         'placeholder': 'Deadline',
-        'id': 'datetime',
-        'value': datetime.utcnow()
-
+        'id': 'deadline',
+        # 'value': datetime.utcnow()
     }))

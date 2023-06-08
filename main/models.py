@@ -145,14 +145,14 @@ class User:
     def image(self, value):
         # file_storage = FileSystemStorage()
         if isinstance(value, str):
-            if not default_storage.exists(str(BASE_DIR) + value):
+            if not default_storage.exists(str(MEDIA_ROOT) + value):
                 raise ValidationError('File does not exist in a storage')
             filename = value
         elif isinstance(value, InMemoryUploadedFile):
             image = Image.open(value)
             image.verify()
             filename = f'images/users/{hash_file(value)}.{value.content_type.split("/")[-1]}'
-            if not default_storage.exists(MEDIA_ROOT / filename):
+            if not default_storage.exists(str(MEDIA_ROOT) + filename):
                 default_storage.save(filename, value)
             filename = MEDIA_URL + "/" + filename
         else:
@@ -239,11 +239,12 @@ class User:
 
 class Auction:
 
-    def __init__(self, start_bid, bid_user=None, deadline=None):  # , name
+    def __init__(self, start_bid, bid_user=None, start_date=None, deadline=None):  # , name
         # self.__name = name
         self.__start_bid = start_bid
         self.__bid = start_bid
         self.__bid_user = bid_user
+        self.__start_date = start_date
         self.__deadline = deadline
         # dictionary = {key.replace('_Auction__', ''): self.__dict__[key] for key in self.__dict__}
         # self.__id = self.__users.insert_one(dictionary).inserted_id
@@ -298,6 +299,19 @@ class Auction:
         self.__bid_user = value
 
     @property
+    def start_date(self):
+        return self.__start_date
+
+    @start_date.setter
+    def start_date(self, value):
+        if not isinstance(value, datetime):
+            raise TypeError(f"Property type must be 'datetime', not '{type(value).__name__}'")
+        if value <= datetime.utcnow():
+            raise ValidationError('Deadline cannot be put in the past')
+        self.__start_date = value
+
+
+    @property
     def deadline(self):
         return self.__deadline
 
@@ -305,7 +319,7 @@ class Auction:
     def deadline(self, value):
         if not isinstance(value, datetime):
             raise TypeError(f"Property type must be 'datetime', not '{type(value).__name__}'")
-        if value <= datetime.utcnow():
+        if value <= datetime.utcnow() or value <= self.__start_date:
             raise ValidationError('Deadline cannot be put in the past')
         self.__deadline = value
 
@@ -405,15 +419,15 @@ class Item:
         # file_storage = FileSystemStorage()
         if isinstance(value, str):
             # print(sttBASE_DIR)
-            print(str(BASE_DIR) + value)
-            if not default_storage.exists(str(BASE_DIR) + value):
+            # print(str(BASE_DIR) + value)
+            if not default_storage.exists(str(MEDIA_ROOT) + value):
                 raise ValidationError('File does not exist in a storage')
             filename = value
         elif isinstance(value, InMemoryUploadedFile):
             image = Image.open(value)
             image.verify()
             filename = f'images/items/{hash_file(value)}.{value.content_type.split("/")[-1]}'
-            if not default_storage.exists(MEDIA_ROOT / filename):
+            if not default_storage.exists(str(MEDIA_ROOT) + filename):
                 default_storage.save(filename, value)
             filename = MEDIA_URL + filename
         else:

@@ -26,7 +26,7 @@
                                     Join auction
                                 </button>
                             </a>
-                        {% else %}
+                        {% elif item.owner_user.name == request.session.name %}
                             <div class="container p-3 bg-dark rounded-5 text-white">
                                 <h5>Launch auction</h5>
                                 <div class="form-floating bg-transparent mb-2 w-75">
@@ -37,11 +37,18 @@
                                 </div>
                                 <div class="form-floating bg-transparent mb-2 w-75" data-provide="datepicker">
                                     {% csrf_token %}
+                                    {{ form.start_date }}
+                                    <label for="{{ form.start_date.auto_id }}"
+                                           class="form-label text-warning bg-transparent">{{ form.start_date.label }}</label>
+                                </div>
+                                <div class="form-floating bg-transparent mb-2 w-75" data-provide="datepicker">
+                                    {% csrf_token %}
                                     {{ form.deadline }}
                                     <label for="{{ form.deadline.auto_id }}"
                                            class="form-label text-warning bg-transparent">{{ form.deadline.label }}</label>
                                 </div>
                             </div>
+                            <button class="btn-outline-warning btn" type="submit">Launch</button>
                         {% endif %}
                     </div>
                 </div>
@@ -159,11 +166,26 @@
         </div>
     </section>
     <script type="text/javascript">
+        let launch = $('#launch')
+        let deadline = $('#deadline')
+        launch.datetimepicker({
+            inline: true,
+            sideBySide: true,
+            minDate: new Date()
+        });
         $(function () {
-            $('#datetime').datetimepicker({
+            deadline.datetimepicker({
                 inline: true,
                 sideBySide: true,
-                minDate: new Date();
+                minDate: new Date(launch.val())
+            });
+        });
+        launch.change(function (){
+            {#deadline.datetimepicker('option', 'minDate', $('#launch').val());#}
+            deadline.datetimepicker({
+                inline: true,
+                sideBySide: true,
+                minDate: new Date(launch.val())
             });
         });
     </script>
