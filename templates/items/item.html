@@ -2,74 +2,81 @@
 {% load static %}
 
 {% block body %}
-<section class="py-5">
-    <div class="container px-4 px-lg-5 my-5">
-        <div class="row gx-4 gx-lg-5 align-items-center">
-            <div class="col-md-6"><img class="border border-dark rounded-3 card-img-top mb-5 mb-md-0" src="{{ item.image }}" alt="..." /></div>
-            <div class="col-md-6">
-             <h1 class="display-5 fw-bolder">{{ item.name }}</h1>
-                <div class="fs-5 mb-5">
-{#                    <span class="text-decoration-line-through">$45.00</span>#}
-{#                    <span>$40.00</span>#}
-                     <span>Owner - <a href="{% url 'Profile' item.owner_user.name %}">{{ item.owner_user.name }}</a></span>
-                </div>
-                 <p class="lead">{{ item.description|linebreaks }}</p>
-                <div class="d-flex">
-{#                    <input class="form-control text-center me-3" id="inputQuantity" type="num" value="1" style="max-width: 3rem" />#}
-                     {% if item.auction %}
-                    <a href="#">
-                        <button class="btn btn-warning flex-shrink-0" type="button">
-                            <i class="bi-cart-fill me-1"></i>
-                            Join auction
-                        </button>
-                    </a>
-                     {% else %}
-                         <div class="container p-3 bg-dark rounded-5 text-white">
-                             <h5>Launch auction</h5>
+
+
+    <section class="py-5">
+        <div class="container px-4 px-lg-5 my-5">
+            <div class="row gx-4 gx-lg-5 align-items-center">
+                <div class="col-md-6"><img class="border border-dark rounded-3 card-img-top mb-5 mb-md-0"
+                                           src="{{ item.image }}" alt="..."/></div>
+                <div class="col-md-6">
+                    <h1 class="display-5 fw-bolder">{{ item.name }}</h1>
+                    <div class="fs-5 mb-5">
+                        {#                    <span class="text-decoration-line-through">$45.00</span>#}
+                        {#                    <span>$40.00</span>#}
+                        <span>Owner - <a href="{% url 'Profile' item.owner_user.name %}">{{ item.owner_user.name }}</a></span>
+                    </div>
+                    <p class="lead">{{ item.description|linebreaks }}</p>
+                    <div class="d-flex">
+                        {#                    <input class="form-control text-center me-3" id="inputQuantity" type="num" value="1" style="max-width: 3rem" />#}
+                        {% if item.auction %}
+                            <a href="#">
+                                <button class="btn btn-warning flex-shrink-0" type="button">
+                                    <i class="bi-cart-fill me-1"></i>
+                                    Join auction
+                                </button>
+                            </a>
+                        {% else %}
+                            <div class="container p-3 bg-dark rounded-5 text-white">
+                                <h5>Launch auction</h5>
                                 <div class="form-floating bg-transparent mb-2 w-75">
                                     {% csrf_token %}
                                     {{ form.start_bid }}
-                                    <label for="{{ form.start_bid.auto_id }}" class="form-label text-warning bg-transparent">{{ form.start_bid.label }}</label>
+                                    <label for="{{ form.start_bid.auto_id }}"
+                                           class="form-label text-warning bg-transparent">{{ form.start_bid.label }}</label>
                                 </div>
-                                <div class="form-floating bg-transparent mb-2 w-75">
+                                <div class="form-floating bg-transparent mb-2 w-75" data-provide="datepicker">
                                     {% csrf_token %}
                                     {{ form.deadline }}
-                                    <label for="{{ form.deadline.auto_id }}" class="form-label text-warning bg-transparent">{{ form.deadline.label }}</label>
+                                    <label for="{{ form.deadline.auto_id }}"
+                                           class="form-label text-warning bg-transparent">{{ form.deadline.label }}</label>
                                 </div>
-                         </div>
-                     {% endif %}
+                            </div>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</section>
-<!-- Related items section-->
-<section class="py-5 bg-light">
-    <div class="container px-4 px-lg-5 mt-5">
-        <h2 class="fw-bolder mb-4">Related items</h2>
-        <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
-            {% for other in items %}
-            <div class="col mb-5">
-                <div class="card h-100">
-                    <!-- Product image-->
-                    <img class="card-img-top" src="{{ other.image }}" alt="..." style="object-fit: cover; max-height: 450px; height: 100%" />
-                    <!-- Product details-->
-                    <div class="card-body p-4">
-                        <div class="text-center">
-                            <!-- Product name-->
-                            <h5 class="fw-bolder">{{ other.name }}</h5>
-                            <!-- Product price-->
-{#                            $40.00 - $80.00#}
+    </section>
+    <!-- Related items section-->
+    <section class="py-5 bg-light">
+        <div class="container px-4 px-lg-5 mt-5">
+            <h2 class="fw-bolder mb-4">Related items</h2>
+            <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+                {% for other in items %}
+                    <div class="col mb-5">
+                        <div class="card h-100">
+                            <!-- Product image-->
+                            <img class="card-img-top" src="{{ other.image }}" alt="..."
+                                 style="object-fit: cover; max-height: 450px; height: 100%"/>
+                            <!-- Product details-->
+                            <div class="card-body p-4">
+                                <div class="text-center">
+                                    <!-- Product name-->
+                                    <h5 class="fw-bolder">{{ other.name }}</h5>
+                                    <!-- Product price-->
+                                    {#                            $40.00 - $80.00#}
+                                </div>
+                            </div>
+                            <!-- Product actions-->
+                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                                <div class="text-center"><a class="btn btn-warning mt-auto"
+                                                            href="{% url 'Item' other.id %}">View</a></div>
+                            </div>
                         </div>
                     </div>
-                    <!-- Product actions-->
-                    <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                        <div class="text-center"><a class="btn btn-warning mt-auto" href="{% url 'Item' other.id %}">View</a></div>
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
-            {% comment %}<div class="col mb-5">
+                {% endfor %}
+                {% comment %}<div class="col mb-5">
                 <div class="card h-100">
                     <!-- Sale badge-->
 {#                    <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">Sale</div>#}
@@ -148,7 +155,16 @@
                     </div>
                 </div>
             </div>{% endcomment %}
+            </div>
         </div>
-    </div>
-</section>
+    </section>
+    <script type="text/javascript">
+        $(function () {
+            $('#datetime').datetimepicker({
+                inline: true,
+                sideBySide: true,
+                minDate: new Date();
+            });
+        });
+    </script>
 {% endblock %}
