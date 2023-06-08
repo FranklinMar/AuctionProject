@@ -55,7 +55,7 @@ class User:
 
     @classmethod
     def update(cls, obj):
-        return cls.__collection.update_one({"_id": obj.__id}, obj.get_vars())
+        return cls.__collection.update_one({"_id": obj.__id}, {'$set': obj.get_vars()})
 
     def delete(self):
         return self.__collection.delete_one(filter={"_id": self.__id})
@@ -350,11 +350,11 @@ class Item:
 
     def save(self):
         dictionary = self.get_vars()
-        return self.__collection.update_one(filter={"_id": self.__id}, update=dictionary)
+        return self.__collection.update_one(filter={"_id": self.__id}, update={'$set': dictionary})
 
     @classmethod
     def update(cls, obj):
-        return cls.__collection.update_one({"_id": obj.__id}, obj.get_vars())
+        return cls.__collection.update_one({"_id": obj.__id}, {'$set': obj.get_vars()})
 
     def delete(self):
         return self.__collection.delete_one(filter={"_id": self.__id})
@@ -493,7 +493,7 @@ class Chat:
 
     @classmethod
     def update(cls, obj):
-        return cls.__collection.update_one({"_id": obj.__id}, obj.get_vars())
+        return cls.__collection.update_one({"_id": obj.__id}, {'$set': obj.get_vars()})
 
     def delete(self):
         return self.__collection.delete_one(filter={"_id": self.__id})
@@ -623,11 +623,11 @@ class Message:
 
     def save(self):
         dictionary = self.get_vars()
-        return self.__collection.update_one(filter={"_id": self.__id}, update=dictionary)
+        return self.__collection.update_one(filter={"_id": self.__id}, update={'$set': dictionary})
 
     @classmethod
     def update(cls, obj):
-        return cls.__collection.update_one({"_id": obj.__id}, obj.get_vars())
+        return cls.__collection.update_one({"_id": obj.__id}, {'$set': obj.get_vars()})
 
     def delete(self):
         return self.__collection.delete_one(filter={"_id": self.__id})

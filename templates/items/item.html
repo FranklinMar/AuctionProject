@@ -26,7 +26,7 @@
                                     Join auction
                                 </button>
                             </a>
-                        {% elif item.owner_user.name == request.session.name %}
+                        {% elif item.owner_user.name == request.session.user.name %}
                             <div class="container p-3 bg-dark rounded-5 text-white">
                                 <h5>Launch auction</h5>
                                 <div class="form-floating bg-transparent mb-2 w-75">

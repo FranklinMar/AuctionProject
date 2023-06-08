@@ -17,7 +17,7 @@ def item_id(request, id: str):
     params = {"item": item, "items": item_list[:4]}
     # if request.method == 'POST':
 
-    if 'name' in request.session:
+    if 'user' in request.session:
         params['form'] = CreateAuction()
     return render(request, "items/item.html", params)
 
@@ -31,23 +31,27 @@ def items(request):
 
 
 def add(request):
-    if 'name' in request.session:
-        if request.method == 'POST':
-            # print("SECTOR 1")
-            # print(request.POST['image'])
-            form = ItemForm(request.POST, request.FILES)
-            if form.is_valid():
-                # print("SECTOR 2")
-                item = Item.create(form.cleaned_data['name'], form.cleaned_data['description'],
-                                   owner=User.find_one({'name': request.session['name']}).id,
-                                   image=form.cleaned_data['image'])
+    if 'user' not in request.session:
+        return redirect('Items')
+    if request.method == 'POST':
+        # print("SECTOR 1")
+        # print(request.POST['image'])
+        form = ItemForm(request.POST, request.FILES)
+        if form.is_valid():
+            # print("SECTOR 2")
+            item = Item.create(form.cleaned_data['name'], form.cleaned_data['description'],
+                               owner=User.find_one({'name': request.session['user']['name']}).id)
+            try:
+                item.image = form.cleaned_data['image']
+                item.save()
+            except TypeError:
+                item.save()
 
-                # print("SECTOR 3")
-                return redirect('Item', id=item.id)
-            else:
-                print(form.errors)
+            # print("SECTOR 3")
+            return redirect('Item', id=item.id)
         else:
-            form = ItemForm()
-        return render(request, "items/add_item.html", {"item": form})
-    return redirect('Items')
+            print(form.errors)
+    else:
+        form = ItemForm()
+    return render(request, "items/add_item.html", {"item": form})
 
