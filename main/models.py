@@ -9,10 +9,8 @@ from pymongo import MongoClient
 from django.core.validators import validate_email
 from django.conf import settings
 # Create your models here.
-# from djongo import models
 from django.core.exceptions import ValidationError
 from django.contrib.auth.hashers import make_password , check_password
-from django.contrib.auth.password_validation import validate_password
 from django.core.files.storage import default_storage
 from PIL import Image
 import hashlib
@@ -31,12 +29,10 @@ def hash_file(file, block_size=65536):
 
 class User:
     __collection = DB['User']
-    # __items = DB['Item']
-    # __chats = DB['Chat']
     __roles = ('admin', 'mod', 'user', 'guest')
 
     def __init__(self, _id, name, password, email, balance=0, role='user',
-                 image='/media/images/users/default.png', chats=[]):  # , items=[]):
+                 image='/media/images/users/default.png', chats=[], online=None):
         self.__id = _id
         self.name = name
         self.__password = password
@@ -44,13 +40,11 @@ class User:
         self.balance = balance
         self.role = role
         self.image = image
-        # self.online = False
-        # self.__items = items
         self.__chats = chats
+        # self.online = False
+        self.online = online
 
     def save(self):
-        # dictionary = self.get_vars()  # {key.replace('_User__', ''): self.__dict__[key] for key in self.__dict__}
-        # dictionary.pop('id')
         return self.__collection.update_one(filter={"_id": self.__id}, update={'$set': self.get_vars()})
 
     @classmethod
@@ -81,8 +75,6 @@ class User:
     def id(self, value):
         if not isinstance(value, ObjectId):
             raise TypeError(f"Property type must be 'ObjectId', not '{type(value).__name__}'")
-        # if not self.__collection.find_one({"_id": value}):
-        #     raise ValidationError(f"Object with Id of {value} not found")
         self.__id = value
 
     @property
@@ -148,10 +140,7 @@ class User:
 
     @image.setter
     def image(self, value):
-        # file_storage = FileSystemStorage()
         if isinstance(value, str):
-            # if not default_storage.exists(str(BASE_DIR) + '\\' + value):
-            #     raise ValidationError('File does not exist in a storage')
             filename = value
         elif isinstance(value, InMemoryUploadedFile):
             image = Image.open(value)
@@ -163,17 +152,24 @@ class User:
         else:
             raise TypeError(f"Property type must be 'str' or 'InMemoryUploadedFile', not '{type(value).__name__}'")
         self.__image = filename
-        # self.save()
 
-    # @property
-    # def online(self):
-    #     return self.__online is None
+    @property
+    def online(self):
+        return self.__online  # is None
 
-    # @online.setter
-    # def online(self, value):
-    #     if not isinstance(value, bool):
-    #         raise TypeError(f"Property type must be 'bool', not '{type(value).__name__}'")
-    #     self.__online = None if value else datetime.utcnow()
+    @online.setter
+    def online(self, value):
+        # if not isinstance(value, bool):
+        #     raise TypeError(f"Property type must be 'bool', not '{type(value).__name__}'")
+        # self.__online = None if value else datetime.utcnow()
+
+        if value and not isinstance(value, datetime):
+            raise TypeError(f"Property type must be 'datetime', not '{type(value).__name__}'")
+        self.__online = value
+
+    def is_online(self):
+        return (datetime.utcnow() - self.__online).seconds < 30
+
     # @property
     # def items(self):
     #     return self.__items
@@ -479,7 +475,8 @@ class Item:
 class Chat:
     __collection = DB['Chat']
 
-    def __init__(self, _id, user1, user2, messages=[]):
+    def __init__(self, _id, user1, user2, messages=[]):  # users=[],
+        # self.users = users
         self.user1 = user1
         self.user2 = user2
         # print(messages)
@@ -516,6 +513,18 @@ class Chat:
         # if not self.__collection.find_one({"_id": value}):
         #     raise ValidationError(f"Object with Id of {value} not found")
         self.__id = value
+
+    # @property
+    # def users(self):
+    #     return [User(**document) for document in User.find({'_id': {'$in': self.__users}})]
+    #
+    # @users.setter
+    # def users(self, value):
+    #     if not isinstance(value, list):
+    #         raise TypeError(f"Property type must be a list of 'ObjectId', not '{type(value).__name__}'")
+    #     if not all(isinstance(item, ObjectId) for item in value):
+    #         raise TypeError(f"Property type inside list must be 'ObjectId'")
+    #     self.__users = value
 
     @property
     def user1(self):

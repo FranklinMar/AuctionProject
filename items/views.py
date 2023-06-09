@@ -1,10 +1,8 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
 from main.models import Item, User
 from django.views.decorators.cache import never_cache
 from bson import ObjectId
 from items.forms import *
-from django.http import HttpResponseRedirect
 
 
 # Create your views here.
@@ -34,11 +32,8 @@ def add(request):
     if 'user' not in request.session:
         return redirect('Items')
     if request.method == 'POST':
-        # print("SECTOR 1")
-        # print(request.POST['image'])
         form = ItemForm(request.POST, request.FILES)
         if form.is_valid():
-            # print("SECTOR 2")
             item = Item.create(form.cleaned_data['name'], form.cleaned_data['description'],
                                owner=User.find_one({'name': request.session['user']['name']}).id)
             try:
@@ -47,7 +42,6 @@ def add(request):
             except TypeError:
                 item.save()
 
-            # print("SECTOR 3")
             return redirect('Item', id=item.id)
         else:
             print(form.errors)

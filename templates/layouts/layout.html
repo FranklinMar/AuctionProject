@@ -60,6 +60,7 @@
                                     <img src="{{ request.session.user.image }}" alt="..." style="object-fit: cover; height: 50px; width: 50px" class="rounded-5 border border-warning border-2">
                                     </button>
                                     <div class="dropdown-menu dropdown-menu-dark dropdown-menu-lg-end" aria-labelledby="dropdownMenuButton">
+                                        <a class="dropdown-item" href="{% url 'Contacts' %}">Chat</a>
                                         <a class="dropdown-item" href="{% url 'Settings' request.session.user.name %}">Settings</a>
                                         <a class="dropdown-item" href="{% url 'Logout' %}">Log out</a>
                                     </div>
