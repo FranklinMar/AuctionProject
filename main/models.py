@@ -55,7 +55,7 @@ class User:
         return self.__collection.delete_one(filter={"_id": self.__id})
 
     def get_vars(self):
-        dictionary = self.get_vars_with_id()
+        dictionary = {key.replace('_User__', ''): self.__dict__[key] for key in self.__dict__}
         dictionary.pop('id')
         return dictionary
 
@@ -64,7 +64,7 @@ class User:
         dictionary['id'] = str(dictionary['id'])
         # print(self.__dict__)
         dictionary['online'] = str(dictionary['online'])
-        # dictionary['chats'] = [str(chat) for chat in self.__chats]
+        dictionary['chats'] = [str(chat) for chat in self.__chats]
         return dictionary
 
     def try_login(self, password):
