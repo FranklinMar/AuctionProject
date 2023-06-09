@@ -40,9 +40,9 @@ class User:
         self.balance = balance
         self.role = role
         self.image = image
-        self.__chats = chats
+        self.chats = chats
         # self.online = False
-        self.online = online
+        self.online = online if isinstance(online, datetime) else datetime.fromisoformat(online)
 
     def save(self):
         return self.__collection.update_one(filter={"_id": self.__id}, update={'$set': self.get_vars()})
@@ -60,8 +60,11 @@ class User:
         return dictionary
 
     def get_vars_with_id(self):
-        dictionary ={key.replace('_User__', ''): self.__dict__[key] for key in self.__dict__}
+        dictionary = {key.replace('_User__', ''): self.__dict__[key] for key in self.__dict__}
         dictionary['id'] = str(dictionary['id'])
+        # print(self.__dict__)
+        dictionary['online'] = str(dictionary['online'])
+        # dictionary['chats'] = [str(chat) for chat in self.__chats]
         return dictionary
 
     def try_login(self, password):
@@ -96,7 +99,7 @@ class User:
         if not isinstance(value, str):
             raise TypeError(f"Property type must be 'str', not '{type(value).__name__}'")
         self.__password = make_password(value)
-        self.save()
+        # self.save()
 
     @property
     def email(self):
@@ -108,7 +111,7 @@ class User:
             raise TypeError(f"Property type must be 'str', not '{type(value).__name__}'")
         validate_email(value)
         self.__email = value
-        self.save()
+        # self.save()
 
     @property
     def balance(self):
@@ -168,7 +171,7 @@ class User:
         self.__online = value
 
     def is_online(self):
-        return (datetime.utcnow() - self.__online).seconds < 30
+        return (datetime.utcnow() - self.__online).seconds < 3
 
     # @property
     # def items(self):
@@ -195,13 +198,14 @@ class User:
 
     @chats.setter
     def chats(self, value):
+        # print(value)
         if not isinstance(value, list):
             raise TypeError(f"Property type must be a list of 'ObjectId', not '{type(value).__name__}'")
-        if not all(isinstance(item, ObjectId) for item in value):
+        if not all(isinstance(item, (ObjectId, str)) for item in value):
             raise TypeError(f"Property type inside list must be 'ObjectId'")
-        if len(value) != len(list(DB['Chat'].find({"_id": {"$in": value}}))):
-            # if len(value) != len([chats_collection.find_one({"_id": item}) for item in value]):
-            raise ValidationError("Not all items found")
+        # if len(value) != len(list(DB['Chat'].find({"_id": {"$in": value}}))):
+        #     if len(value) != len([chats_collection.find_one({"_id": item}) for item in value]):
+        #     raise ValidationError("Not all items found")
         self.__chats = value
 
     def chats_list(self):
@@ -233,7 +237,7 @@ class User:
         #     raise ValueError("акаунт з цим ім'ям вже існує")
         # if not(User.find_one({'email': email}) is None):
         #     raise ValueError("акаунт з цим емейлом вже існує")
-        user = cls(None, name, password, email, balance, role, image, chats)  # , items
+        user = cls(None, name, password, email, balance, role, image, chats=chats)  # , items
         user.password = password
         user.id = cls.__collection.insert_one(user.get_vars()).inserted_id
         return user

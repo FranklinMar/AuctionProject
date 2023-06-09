@@ -13,8 +13,7 @@ class UpdateLastActivityMiddleware(object):
         return self.get_response(request)
 
     def process_view(self, request, view_func, view_args, view_kwargs):
-        # assert hasattr(request.session, 'user'), 'The UpdateLastActivityMiddleware requires
-        # authentication middleware to be installed.'
+        # assert hasattr(request.session, 'user'), 'The UpdateLastActivityMiddleware requires authentication middleware to be installed.'
         if 'user' in request.session:
             user = User.find_one({'_id': ObjectId(request.session['user']['id'])})
             user.online = datetime.utcnow()  # timezone.now()
