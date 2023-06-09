@@ -68,7 +68,7 @@ class User:
         return dictionary
 
     def try_login(self, password):
-        return check_password(password,self.password)
+        return check_password(password, self.password)
 
     @property
     def id(self):
